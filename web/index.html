@@ -5,17 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pomato Radio 130.3</title>
 <script>
-  /* Palette before first paint, so the page never flashes the wrong hour.
-     The server is the authority (see /show.json) — this is only a guess for
-     the first frame. */
-  function guessBand() {
-    var d = new Date(), h = d.getHours(), w = d.getDay() === 0 ? 7 : d.getDay();
-    if (w === 5 && h >= 17) return "evening";
-    if (w === 6) return h < 6 ? "evening" : h < 12 ? "morning" : h < 18 ? "afternoon" : h < 22 ? "evening" : "night";
-    if (w === 7) return h < 6 ? "night" : h < 14 ? "morning" : h < 22 ? "afternoon" : "night";
-    return h < 6 ? "night" : h < 12 ? "morning" : h < 17 ? "afternoon" : h < 23 ? "evening" : "night";
+  /* The schedule, mirrored from station.liq. The server is the authority
+     (see /show.json) — this copy exists so the palette is right on the very
+     first frame, and so the page still names the show when it's hosted with
+     no station behind it.
+
+     ⚠ Liquidsoap can't hand its switch to JavaScript. Change station.liq and
+     change this too, or the page will confidently name the wrong show. */
+  var SHOWS = {
+    firstlight:    { label: "first light",    palette: "morning" },
+    slowroll:      { label: "slow roll",      palette: "morning" },
+    midday:        { label: "midday",         palette: "afternoon" },
+    longafternoon: { label: "long afternoon", palette: "afternoon" },
+    slowdrive:     { label: "slow drive",     palette: "evening" },
+    nightgarage:   { label: "night garage",   palette: "evening" },
+    smallhours:    { label: "small hours",    palette: "night" },
+    afrofriday:    { label: "afro friday",    palette: "evening" },
+    saturdaysoul:  { label: "saturday soul",  palette: "morning" },
+    hiphop:        { label: "hip hop hours",  palette: "afternoon" },
+    trap:          { label: "trap",           palette: "evening" },
+    househours:    { label: "house hours",    palette: "night" },
+    sundayfolk:    { label: "sunday folk",    palette: "morning" },
+    country:       { label: "country",        palette: "afternoon" }
+  };
+
+  function currentShow(when) {
+    var d = when || new Date(), h = d.getHours();
+    var w = d.getDay() === 0 ? 7 : d.getDay();      // 1 = Monday … 7 = Sunday
+    if (w === 5 && h >= 17) return "afrofriday";
+    if (w === 6) {
+      if (h < 6)  return "afrofriday";              // Friday night, past midnight
+      if (h < 12) return "saturdaysoul";
+      if (h < 18) return "hiphop";
+      if (h < 22) return "trap";
+      return "househours";
+    }
+    if (w === 7) {
+      if (h < 6)  return "househours";              // Saturday night, same idea
+      if (h < 14) return "sundayfolk";
+      if (h < 22) return "country";
+    }
+    if (h < 6)  return "smallhours";
+    if (h < 10) return "firstlight";
+    if (h < 12) return "slowroll";
+    if (h < 14) return "midday";
+    if (h < 17) return "longafternoon";
+    if (h < 20) return "slowdrive";
+    if (h < 23) return "nightgarage";
+    return "smallhours";
   }
-  document.documentElement.dataset.band = guessBand();
+
+  document.documentElement.dataset.band = SHOWS[currentShow()].palette;
 </script>
 <style>
   :root,
@@ -154,7 +194,7 @@
 
   .label {
     position: absolute; inset: 27%; border-radius: 50%;
-    background: var(--label-img, url("/web/label.png")) center / cover no-repeat, #1b1a1c;
+    background: var(--label-img, url("label.png")) center / cover no-repeat, #1b1a1c;
     box-shadow: 0 0 0 3px var(--gold), 0 0 0 4px rgba(0,0,0,.55);
     /* The label sits still while the grooves turn around it — a spinning
        video would be unwatchable. Scale is the only motion here, so it reads
@@ -394,8 +434,8 @@
     <div class="vinyl"></div>
     <div class="label" id="label" role="img" aria-label="Pomato Radio mascots">
       <video class="label-vid" id="labelVid" muted loop playsinline
-             preload="auto" poster="/web/label.png" aria-hidden="true">
-        <source src="/web/label.mp4" type="video/mp4">
+             preload="auto" poster="label.png" aria-hidden="true">
+        <source src="label.mp4" type="video/mp4">
       </video>
     </div>
     <button class="play-hit" id="discBtn" aria-label="Play the stream"></button>
@@ -454,6 +494,11 @@
 <audio id="audio" preload="none"></audio>
 
 <script>
+/* Point this at a public Icecast mount to put the page anywhere. Left on
+   localhost it works when you run the station yourself; hosted on GitHub
+   Pages with no server behind it, the page still renders the right show and
+   schedule from the fallback below — it simply reports Off air, which is the
+   truth, rather than pretending. */
 const STREAM = "http://localhost:8000/radio.mp3";
 const MOUNT  = "radio.mp3";
 
@@ -588,7 +633,7 @@ let lastTrack = null;
 
 async function poll() {
   try {
-    const r = await fetch("/nowplaying.txt?t=" + Date.now());
+    const r = await fetch("nowplaying.txt?t=" + Date.now());
     const t = r.ok ? (await r.text()).trim() : "";
     if (t !== lastTrack) {
       lastTrack = t;
@@ -597,14 +642,14 @@ async function poll() {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: t || "Pomato Radio 130.3",
           artist: "Pomato Radio 130.3",
-          artwork: [{ src: location.origin + "/web/label.png", sizes: "560x560", type: "image/png" }],
+          artwork: [{ src: location.origin + "label.png", sizes: "560x560", type: "image/png" }],
         });
       }
     }
   } catch {}
 
   try {
-    const r = await fetch("/status.json?t=" + Date.now());
+    const r = await fetch("status.json?t=" + Date.now());
     if (r.ok) {
       const d = await r.json();
       const src = [].concat(d?.icestats?.source ?? [])
@@ -618,10 +663,36 @@ async function poll() {
 /* The show comes from the server, on the station's clock. There is one stream,
    so every listener hears the same hour no matter where they are — working it
    out from the browser clock would name a show that isn't playing. */
+/* Standalone fallback, for when the page is hosted with no station behind it
+   (GitHub Pages). Same tables, same shape as /show.json — but read off the
+   visitor's clock, which is a guess: it names the show that *would* be on if
+   the station ran in their timezone. Good enough to show the schedule; the
+   server always wins when there is one. */
+function localShow() {
+  const show = currentShow();
+  const now = new Date();
+  let probe = new Date(now); probe.setMinutes(0, 0, 0);
+  let nxt = show, at = null;
+  for (let i = 0; i < 48; i++) {
+    probe = new Date(probe.getTime() + 3600e3);
+    const c = currentShow(probe);
+    if (c !== show) { nxt = c; at = probe; break; }
+  }
+  const pad = n => String(n).padStart(2, "0");
+  return {
+    show, label: SHOWS[show].label, palette: SHOWS[show].palette,
+    art: "label.png", clip: "label.mp4",
+    station_time: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
+    station_offset_minutes: -now.getTimezoneOffset(),
+    next: { show: nxt, label: SHOWS[nxt].label,
+            at: at ? `${pad(at.getHours())}:00` : null }
+  };
+}
+
 async function showNow() {
   let s;
-  try { s = await (await fetch("/show.json?t=" + Date.now())).json(); }
-  catch { return; }
+  try { s = await (await fetch("show.json?t=" + Date.now())).json(); }
+  catch { s = localShow(); }
 
   document.documentElement.dataset.band = s.palette;
   document.getElementById("show").textContent = s.label;
@@ -669,13 +740,13 @@ function dressDisc(show, art, clip) {
   deck.style.setProperty("--spin", t.spin);
   deck.style.setProperty("--pulse", t.pulse);
 
-  const still = art || "/web/label.png";
+  const still = art || "label.png";
   document.getElementById("label").style.setProperty("--label-img", `url("${still}")`);
 
   /* Only reload the video when the file actually changes — assigning src
      unconditionally would restart the loop on every poll, five seconds apart. */
   const vid = document.getElementById("labelVid");
-  const want = clip || "/web/label.mp4";
+  const want = clip || "label.mp4";
   if (vid && !vid.currentSrc.endsWith(want)) {
     vid.poster = still;
     vid.querySelector("source").src = want;

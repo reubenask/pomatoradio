@@ -126,10 +126,10 @@ def schedule_now() -> dict:
     # page would probe for artwork that mostly doesn't exist and litter the
     # console with failed requests.
     art = ROOT / "web" / f"label-{current}.png"
-    art_url = f"/web/label-{current}.png" if art.exists() else "/web/label.png"
+    art_url = f"label-{current}.png" if art.exists() else "label.png"
 
     clip = ROOT / "web" / f"label-{current}.mp4"
-    clip_url = f"/web/label-{current}.mp4" if clip.exists() else "/web/label.mp4"
+    clip_url = f"label-{current}.mp4" if clip.exists() else "label.mp4"
 
     label, palette = SHOWS[current]
     return {
@@ -159,6 +159,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
         if route == "/":
             self.path = "/web/index.html"
+        elif route in ("/label.png", "/label.mp4"):
+            # The page uses relative asset paths so it also works when hosted
+            # under a subpath (GitHub Pages serves projects from /<repo>/).
+            # Served from / locally, those resolve to the root — map them back.
+            self.path = "/web" + route
         elif route == "/status.json":
             return self._proxy_status()
         elif route == "/nowplaying.txt":
