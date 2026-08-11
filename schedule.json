@@ -1,0 +1,67 @@
+{
+  "station_name": "Pomato Radio 130.3",
+  "note": "Show names match music/<show>/ and drops/today/<show>/. Weekdays run by time of day; the weekend runs by genre, Friday 17:00 through Sunday 22:00. Nights carry past midnight \u2014 Friday night is Saturday 1am.",
+  "weekday": {
+    "firstlight": {
+      "hours": "06:00-10:00",
+      "vibe": "Soft, slow, nothing demanding. Music for opening the laptop and deciding what the day is."
+    },
+    "slowroll": {
+      "hours": "10:00-12:00",
+      "vibe": "Warmer and jazzier. Properly awake now, still unhurried."
+    },
+    "midday": {
+      "hours": "12:00-14:00",
+      "vibe": "Brighter and easy. Lunch music \u2014 present but not distracting."
+    },
+    "longafternoon": {
+      "hours": "14:00-17:00",
+      "vibe": "Focus music. Minimal, low drama, long tracks. The hardest hours of the day."
+    },
+    "slowdrive": {
+      "hours": "17:00-20:00",
+      "vibe": "Rush hour. Steady, calm, get-home-safe. Nothing jarring, nothing that makes anyone drive faster."
+    },
+    "nightgarage": {
+      "hours": "20:00-23:00",
+      "vibe": "Deeper, groove-led. House and garage. The evening has some energy in it."
+    },
+    "smallhours": {
+      "hours": "23:00-06:00",
+      "vibe": "Sparse and ambient. Long pads, almost no percussion. Company for anyone still up."
+    }
+  },
+  "weekend": {
+    "afrofriday": {
+      "when": "Fri 17:00 - Sat 06:00",
+      "vibe": "Afrobeats, all night. Friday clocks off and the weekend starts here."
+    },
+    "saturdaysoul": {
+      "when": "Sat 06:00 - 12:00",
+      "vibe": "R&B and soul. Easy start, nobody's in a hurry."
+    },
+    "hiphop": {
+      "when": "Sat 12:00 - 18:00",
+      "vibe": "Hip hop through the afternoon. Confident, head-nod tempo."
+    },
+    "trap": {
+      "when": "Sat 18:00 - 22:00",
+      "vibe": "Harder and darker. The night getting its shoes on."
+    },
+    "househours": {
+      "when": "Sat 22:00 - Sun 06:00",
+      "vibe": "House. The peak of the weekend, straight through to sunrise."
+    },
+    "sundayfolk": {
+      "when": "Sun 06:00 - 14:00",
+      "vibe": "Folk and acoustic. Gentle, warm, unhurried."
+    },
+    "country": {
+      "when": "Sun 14:00 - 22:00",
+      "vibe": "Country and americana. Sunday afternoon, windows open."
+    }
+  },
+  "any": {
+    "vibe": "Catch-all. Tracks that suit the station at any hour, played whenever a show folder is empty."
+  }
+}
