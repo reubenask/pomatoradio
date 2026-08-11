@@ -20,6 +20,22 @@ ICECAST_XML="logs/icecast.xml"
 mkdir -p logs
 pids=()
 
+# Show folders are created here rather than tracked in git. The obvious
+# alternative — a .gitkeep in each one — breaks the station: Liquidsoap's
+# playlist finds the placeholder, check_next rejects it as non-audio, and it
+# retries in a tight loop until it has leaked a hundred thousand request IDs
+# and never connects. Empty folders are fine; folders with junk in them are not.
+python3 - <<'PY'
+import json, pathlib
+cfg = json.loads(pathlib.Path("schedule.json").read_text())
+shows = list(cfg.get("weekday", {})) + list(cfg.get("weekend", {}))
+for s in shows:
+    pathlib.Path("music", s).mkdir(parents=True, exist_ok=True)
+    pathlib.Path("drops/today", s).mkdir(parents=True, exist_ok=True)
+pathlib.Path("music/any").mkdir(parents=True, exist_ok=True)
+pathlib.Path("drops/today/anytime").mkdir(parents=True, exist_ok=True)
+PY
+
 cleanup() {
   echo ""
   echo "Stopping…"
@@ -55,9 +71,17 @@ echo "  $tracks tracks, $drops voice drops"
 echo ""
 
 # --- icecast ----------------------------------------------------------------
-# Single source of truth for the password: whatever station.liq sends.
-PASSWORD=$(grep -m1 '^  password' station.liq | sed 's/.*"\(.*\)".*/\1/')
-[ -n "$PASSWORD" ] || { echo "Couldn't read the source password out of station.liq."; exit 1; }
+# Single source of truth for the password: the environment. station.liq reads
+# the same variable with the same default, so the two cannot drift apart — and
+# neither file contains a real secret to leak.
+PASSWORD="${POMATO_SOURCE_PASSWORD:-change-me}"
+export POMATO_SOURCE_PASSWORD="$PASSWORD"
+
+if [ "$PASSWORD" = "change-me" ]; then
+  echo "  note        using the default password — fine on a laptop, not on a"
+  echo "              public server. Set POMATO_SOURCE_PASSWORD before exposing"
+  echo "              port 8000 to the internet."
+fi
 
 SHARE="$(brew --prefix 2>/dev/null)/share/icecast"
 [ -d "$SHARE/web" ] || SHARE="/usr/local/share/icecast"

@@ -1,16 +1,12 @@
 # Music. Not ours to redistribute, and a single WAV master is bigger than the
 # rest of the repo put together. The folder structure matters; the audio does
 # not travel with the code.
-# Note the shape of these three lines: git cannot re-include a file whose
-# parent directory is excluded, so the directories are un-ignored first and
-# only their contents dropped. That keeps the show folders in a fresh clone.
-music/**/*
-!music/**/
-!**/.gitkeep
-
-# Recorded voice drops. Personal, and regenerated from SCRIPTS.md anyway.
-drops/today/**/*
-!drops/today/**/
+# The show folders are not tracked at all — start.sh creates them from
+# schedule.json on every run. Keeping them with .gitkeep placeholders looks
+# tidier and breaks the station: Liquidsoap's playlist retries the rejected
+# placeholder forever instead of treating the folder as empty.
+music/
+drops/today/
 retired/
 
 # Original recordings, renders and mockups — large binaries that would bloat
@@ -25,7 +21,3 @@ nowplaying.txt
 __pycache__/
 *.pyc
 .DS_Store
-
-# Last word wins in gitignore, so the placeholders that hold the empty show
-# folders open have to be re-included after every rule that excluded them.
-!**/.gitkeep

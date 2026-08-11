@@ -14,6 +14,18 @@ settings.log.stdout := true
 root = path.dirname(argv(0))
 music_dir = "#{root}/music"
 
+# Passwords come from the environment so they never sit in a public repo. The
+# defaults are deliberately obvious placeholders — fine on a laptop where only
+# you can reach port 8000, not fine on a machine facing the internet.
+#
+#   export POMATO_SOURCE_PASSWORD='...'   # liquidsoap → icecast
+#   export POMATO_LIVE_PASSWORD='...'     # your mic → liquidsoap
+#
+# start.sh reads the same two variables when it generates icecast.xml, so the
+# two halves cannot drift apart.
+source_password = environment.get(default = "change-me", "POMATO_SOURCE_PASSWORD")
+live_password = environment.get(default = "change-me-too", "POMATO_LIVE_PASSWORD")
+
 # ---------------------------------------------------------------- the library
 
 # Folders collect junk — .DS_Store, stray .txt, artwork. Skip anything that
@@ -156,8 +168,8 @@ drops = random(weights = [1, 1], [band_now, band("anytime")])
 drops = delay(45., drops)
 
 # The live mic. Point a broadcaster (BUTT, Mixxx) at:
-#   host localhost / port 8005 / mount live / password below
-live = input.harbor("live", port = 8005, password = "change-me-too")
+#   host localhost / port 8005 / mount live / POMATO_LIVE_PASSWORD
+live = input.harbor("live", port = 8005, password = live_password)
 
 # Both the generated drops and your live mic ride *over* the music, ducking it
 # down rather than replacing it — the sound of a DJ talking across an intro.
@@ -197,7 +209,7 @@ output.icecast(
   format = "audio/mpeg",
   host = "localhost",
   port = 8000,
-  password = "change-me",
+  password = source_password,
   mount = "radio.mp3",
   name = "Pomato Radio 130.3",
   radio
