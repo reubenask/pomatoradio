@@ -529,11 +529,10 @@ document.getElementById("mute").addEventListener("click", () => {
 function start() {
   failed = false;
   audio.src = STREAM + "?t=" + Date.now();
-  audio.play().then(() => setPlaying(true)).catch(err => {
-    fail(err && err.name === "NotAllowedError" ? "Press play again" : "Can't connect");
-  });
+  audio.play().then(() => setPlaying(true)).catch(() => startPreview());
 }
 function stop() {
+  preview = false;
   audio.pause();
   audio.removeAttribute("src");
   audio.load();
@@ -544,11 +543,83 @@ function toggle() { document.body.classList.contains("playing") ? stop() : start
 document.getElementById("play").addEventListener("click", toggle);
 document.getElementById("discBtn").addEventListener("click", toggle);
 
-/* Live radio has no "previous track" — the only honest seek is back to the
-   live edge, which a fresh request gives you. */
+/* Live has "jump to live"; preview has nothing to resync to, so it just
+   moves on to a different track — same button, the nearest honest meaning
+   in each mode. */
 document.getElementById("resync").addEventListener("click", () => {
-  if (document.body.classList.contains("playing")) { stop(); start(); }
+  if (!document.body.classList.contains("playing")) return;
+  if (preview) nextPreviewTrack();
+  else { stop(); start(); }
 });
+
+/* ---------------------------------------------------------- fallback mix
+   No live stream reaches this page on GitHub Pages, and the audience never
+   sees a track picker to work around that — real radio doesn't have one.
+   Press play and something is already going, the way turning on a radio
+   works: joined mid-track, one title at a time, next one picked when this
+   one ends. web/samples/manifest.json (written by
+   scripts/import_trial_music.py) is the pool; whichever show the schedule
+   says is on decides which slice of it plays. */
+let preview = false;
+let liveShow = null;
+let previewManifest = null;
+let previewQueue = [];
+
+async function loadPreviewManifest() {
+  if (previewManifest) return previewManifest;
+  try { previewManifest = await (await fetch("samples/manifest.json?t=" + Date.now())).json(); }
+  catch { previewManifest = []; }
+  return previewManifest;
+}
+
+function shuffle(list) {
+  const out = list.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+async function startPreview() {
+  const manifest = await loadPreviewManifest();
+  if (!manifest.length) { fail("Can't connect"); return; }
+
+  const pool = manifest.filter(t => t.show === liveShow);
+  previewQueue = shuffle(pool.length ? pool : manifest);
+  preview = true;
+  playPreviewTrack(true);
+}
+
+function nextPreviewTrack() {
+  previewQueue.push(previewQueue.shift());
+  playPreviewTrack(false);
+}
+
+function playPreviewTrack(joinMidway) {
+  const track = previewQueue[0];
+  switchingTrack = true;
+  audio.src = "samples/" + track.file;
+  const begin = () => {
+    if (joinMidway && track.duration > 6) {
+      audio.currentTime = Math.random() * (track.duration - 4);
+    }
+    audio.play().then(() => { switchingTrack = false; setPlaying(true); })
+      .catch(() => { switchingTrack = false; fail("Can't connect"); });
+  };
+  audio.addEventListener("loadedmetadata", begin, { once: true });
+  audio.load();
+  document.getElementById("now").textContent = track.title;
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title,
+      artist: "Pomato Radio 130.3",
+      artwork: [{ src: location.origin + "/label.png", sizes: "560x560", type: "image/png" }],
+    });
+  }
+}
+
+audio.addEventListener("ended", () => { if (preview) nextPreviewTrack(); });
 
 /* Someone who asked the OS for less motion gets the still, not a loop.
    Declared before setPlaying, which reads it — a const referenced from a
@@ -559,7 +630,7 @@ function setPlaying(on) {
   failed = false;
   document.body.classList.toggle("playing", on);
   document.body.classList.remove("offline");
-  stateEl.textContent = on ? "On air" : "Off air";
+  stateEl.textContent = on ? (preview ? "Previewing" : "On air") : "Off air";
   const label = on ? "Pause the stream" : "Play the stream";
   document.getElementById("play").setAttribute("aria-label", label);
   document.getElementById("discBtn").setAttribute("aria-label", label);
@@ -574,14 +645,19 @@ function setPlaying(on) {
 }
 function fail(msg) {
   failed = true;
+  preview = false;
   document.body.classList.remove("playing");
   document.body.classList.add("offline");
   stateEl.textContent = msg;
 }
 
 /* A rejected play() also fires `pause`; without the flag that handler wipes
-   the error message and the user is told nothing at all. */
-audio.addEventListener("pause",   () => { if (!failed) setPlaying(false); });
+   the error message and the user is told nothing at all. Swapping to the
+   next preview track fires it too — audio.load() pauses before the new
+   source is ready — and that one has to be ignored the same way, or the
+   station reads as stopping between every single track. */
+let switchingTrack = false;
+audio.addEventListener("pause",   () => { if (!failed && !switchingTrack) setPlaying(false); });
 audio.addEventListener("playing", () => setPlaying(true));
 audio.addEventListener("error",   () => {
   if (!audio.getAttribute("src")) return;
@@ -632,6 +708,7 @@ addEventListener("keydown", e => { if (e.key === "Escape") sheet.classList.remov
 let lastTrack = null;
 
 async function poll() {
+  if (preview) return;   // the preview rotation owns #now while it's playing
   try {
     const r = await fetch("nowplaying.txt?t=" + Date.now());
     const t = r.ok ? (await r.text()).trim() : "";
@@ -642,7 +719,7 @@ async function poll() {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: t || "Pomato Radio 130.3",
           artist: "Pomato Radio 130.3",
-          artwork: [{ src: location.origin + "label.png", sizes: "560x560", type: "image/png" }],
+          artwork: [{ src: location.origin + "/label.png", sizes: "560x560", type: "image/png" }],
         });
       }
     }
@@ -694,6 +771,7 @@ async function showNow() {
   try { s = await (await fetch("show.json?t=" + Date.now())).json(); }
   catch { s = localShow(); }
 
+  liveShow = s.show;
   document.documentElement.dataset.band = s.palette;
   document.getElementById("show").textContent = s.label;
   dressDisc(s.show, s.art, s.clip);

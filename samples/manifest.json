@@ -1,0 +1,122 @@
+[
+  {
+    "show": "firstlight",
+    "title": "First Light Unfolding",
+    "file": "first-light-unfolding.mp3",
+    "duration": 60.0
+  },
+  {
+    "show": "firstlight",
+    "title": "Early Morning Stillness",
+    "file": "early-morning-stillness.mp3",
+    "duration": 69.6
+  },
+  {
+    "show": "firstlight",
+    "title": "Sable Palm Drift",
+    "file": "sable-palm-drift.mp3",
+    "duration": 135.3
+  },
+  {
+    "show": "firstlight",
+    "title": "Palm Line Horizon",
+    "file": "palm-line-horizon.mp3",
+    "duration": 59.8
+  },
+  {
+    "show": "slowroll",
+    "title": "Blue Room Swing",
+    "file": "blue-room-swing.mp3",
+    "duration": 59.8
+  },
+  {
+    "show": "slowroll",
+    "title": "Corner Booth Sway",
+    "file": "corner-booth-sway.mp3",
+    "duration": 59.8
+  },
+  {
+    "show": "slowdrive",
+    "title": "Dusty Highway",
+    "file": "dusty-highway.mp3",
+    "duration": 223.7
+  },
+  {
+    "show": "slowdrive",
+    "title": "Shoulder Lane Drift",
+    "file": "shoulder-lane-drift.mp3",
+    "duration": 235.2
+  },
+  {
+    "show": "nightgarage",
+    "title": "Follow The Rhythm",
+    "file": "follow-the-rhythm.mp3",
+    "duration": 180.0
+  },
+  {
+    "show": "nightgarage",
+    "title": "Velvet Circuit",
+    "file": "velvet-circuit.mp3",
+    "duration": 155.5
+  },
+  {
+    "show": "nightgarage",
+    "title": "Low Voltage Blue",
+    "file": "low-voltage-blue.mp3",
+    "duration": 210.3
+  },
+  {
+    "show": "nightgarage",
+    "title": "Velvet After Hours",
+    "file": "velvet-after-hours.mp3",
+    "duration": 208.6
+  },
+  {
+    "show": "nightgarage",
+    "title": "Last Call Neon",
+    "file": "last-call-neon.mp3",
+    "duration": 214.2
+  },
+  {
+    "show": "smallhours",
+    "title": "Blue Smoke Loop",
+    "file": "blue-smoke-loop.mp3",
+    "duration": 252.1
+  },
+  {
+    "show": "smallhours",
+    "title": "Ashtray Hours",
+    "file": "ashtray-hours.mp3",
+    "duration": 239.0
+  },
+  {
+    "show": "smallhours",
+    "title": "Late Night Receipt",
+    "file": "late-night-receipt.mp3",
+    "duration": 59.8
+  },
+  {
+    "show": "smallhours",
+    "title": "Closing Tab",
+    "file": "closing-tab.mp3",
+    "duration": 59.8
+  },
+  {
+    "show": "any",
+    "title": "Backroom Clean",
+    "file": "backroom-clean.mp3",
+    "duration": 171.8
+  },
+  {
+    "show": "any",
+    "title": "Back Door Exit",
+    "file": "back-door-exit.mp3",
+    "duration": 213.3
+  },
+  {
+    "show": "any",
+    "title": "One Drop Nostalgia",
+    "file": "one-drop-nostalgia.mp3",
+    "duration": 240.0
+  }
+]
