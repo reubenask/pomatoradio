@@ -162,10 +162,12 @@ band_now = by_show(track_sensitive = false, band)
 # two and skips whichever is unavailable, so empty folders still cost nothing.
 drops = random(weights = [1, 1], [band_now, band("anytime")])
 
-# Minimum gap between drops. 45. is a TESTING value — you'll hear the host
-# every 45 seconds, which is unlistenable but proves the chain fast.
-# Put this back to 7200. (two hours) before leaving it running for real.
-drops = delay(45., drops)
+# Minimum gap between drops. 30 minutes while the library is 4 generic
+# anytime clips — often enough that listeners hear a human, not so often it
+# repeats within a sitting. Once the full 56-drop set is recorded, widen this
+# back toward 7200. (two hours), since a real per-show script set shouldn't
+# need to lean on frequency to feel present.
+drops = delay(1800., drops)
 
 # The live mic. Point a broadcaster (BUTT, Mixxx) at:
 #   host localhost / port 8005 / mount live / POMATO_LIVE_PASSWORD
@@ -186,11 +188,39 @@ radio = smooth_add(p = 0.35, normal = radio, special = live)
 
 # Written on every track change. The YouTube overlay reads this file; harmless
 # to leave running even if you never stream video.
+# Plenty of free-to-broadcast music arrives untagged — and ffmpeg's Ogg muxer
+# drops metadata under -c copy, so even files we tag ourselves can come through
+# bare. Rather than showing "untitled", fall back to the filename, which the
+# library already follows: "Artist - Title.mp3".
+def from_filename(m) =
+  base = path.remove_extension(path.basename(m["filename"]))
+  parts = string.split(separator = " - ", base)
+  if list.length(parts) >= 2 then
+    (list.nth(default = "", parts, 0),
+     string.concat(separator = " - ", list.tl(parts)))
+  else
+    ("", base)
+  end
+end
+
 def write_now_playing(m) =
   artist = m["artist"]
   title = m["title"]
+
+  # Tags win; the filename is the safety net.
+  let (artist, title) =
+    if artist == "" or title == "" then
+      let (fa, ft) = from_filename(m)
+      (if artist == "" then fa else artist end,
+       if title == "" then ft else title end)
+    else
+      (artist, title)
+    end
+
   if artist != "" and title != "" then
     file.write(data = "#{artist} — #{title}", "#{root}/nowplaying.txt")
+  elsif title != "" then
+    file.write(data = title, "#{root}/nowplaying.txt")
   end
 end
 

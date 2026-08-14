@@ -1,0 +1,102 @@
+[
+  {
+    "show": "firstlight",
+    "title": "First Light Unfolding",
+    "file": "first-light-unfolding.mp3"
+  },
+  {
+    "show": "firstlight",
+    "title": "Early Morning Stillness",
+    "file": "early-morning-stillness.mp3"
+  },
+  {
+    "show": "firstlight",
+    "title": "Sable Palm Drift (A)",
+    "file": "sable-palm-drift-a.mp3"
+  },
+  {
+    "show": "firstlight",
+    "title": "Sable Palm Drift (B)",
+    "file": "sable-palm-drift-b.mp3"
+  },
+  {
+    "show": "slowroll",
+    "title": "Blue Room Swing (A)",
+    "file": "blue-room-swing-a.mp3"
+  },
+  {
+    "show": "slowroll",
+    "title": "Blue Room Swing (B)",
+    "file": "blue-room-swing-b.mp3"
+  },
+  {
+    "show": "slowdrive",
+    "title": "Dusty Highway (A)",
+    "file": "dusty-highway-a.mp3"
+  },
+  {
+    "show": "slowdrive",
+    "title": "Dusty Highway (B)",
+    "file": "dusty-highway-b.mp3"
+  },
+  {
+    "show": "nightgarage",
+    "title": "Follow The Rhythm",
+    "file": "follow-the-rhythm.mp3"
+  },
+  {
+    "show": "nightgarage",
+    "title": "Velvet Circuit (A)",
+    "file": "velvet-circuit-a.mp3"
+  },
+  {
+    "show": "nightgarage",
+    "title": "Velvet Circuit (B)",
+    "file": "velvet-circuit-b.mp3"
+  },
+  {
+    "show": "nightgarage",
+    "title": "Velvet After Hours (A)",
+    "file": "velvet-after-hours-a.mp3"
+  },
+  {
+    "show": "nightgarage",
+    "title": "Velvet After Hours (B)",
+    "file": "velvet-after-hours-b.mp3"
+  },
+  {
+    "show": "smallhours",
+    "title": "Blue Smoke Loop (A)",
+    "file": "blue-smoke-loop-a.mp3"
+  },
+  {
+    "show": "smallhours",
+    "title": "Blue Smoke Loop (B)",
+    "file": "blue-smoke-loop-b.mp3"
+  },
+  {
+    "show": "smallhours",
+    "title": "Late Night Receipt (A)",
+    "file": "late-night-receipt-a.mp3"
+  },
+  {
+    "show": "smallhours",
+    "title": "Late Night Receipt (B)",
+    "file": "late-night-receipt-b.mp3"
+  },
+  {
+    "show": "any",
+    "title": "Backroom Clean (A)",
+    "file": "backroom-clean-a.mp3"
+  },
+  {
+    "show": "any",
+    "title": "Backroom Clean (B)",
+    "file": "backroom-clean-b.mp3"
+  },
+  {
+    "show": "any",
+    "title": "One Drop Nostalgia",
+    "file": "one-drop-nostalgia.mp3"
+  }
+]

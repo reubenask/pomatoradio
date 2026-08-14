@@ -159,7 +159,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
         if route == "/":
             self.path = "/web/index.html"
-        elif route in ("/label.png", "/label.mp4"):
+        elif route in ("/label.png", "/label.mp4") or route.startswith("/samples/"):
             # The page uses relative asset paths so it also works when hosted
             # under a subpath (GitHub Pages serves projects from /<repo>/).
             # Served from / locally, those resolve to the root — map them back.

@@ -351,6 +351,33 @@
   .stats b { color: var(--ink); font-weight: 400; }
   .stats svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 
+  /* -------------------------------------------------------------- samples */
+  .samples { width: 100%; display: flex; justify-content: center; padding: 0 0 30px; }
+  .samples-inner { width: min(100%, 430px); padding: 0 4px; }
+  .samples h2 {
+    font-family: Georgia, serif; font-size: 19px; font-weight: 400;
+    margin-bottom: 3px; text-align: center;
+  }
+  .samples .sub {
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--ink-dim); text-align: center; margin-bottom: 12px;
+  }
+  .samples-note {
+    font-size: 12px; line-height: 1.6; color: var(--ink-dim);
+    text-align: center; margin-bottom: 22px;
+  }
+  .sample-group + .sample-group { margin-top: 20px; }
+  .sample-group h3 {
+    font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--ink-dim); margin-bottom: 8px;
+  }
+  .sample-row {
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .sample-row:last-child { border-bottom: 0; }
+  .sample-row .title { font-family: Georgia, serif; font-size: 13.5px; margin-bottom: 7px; }
+  .sample-row audio { width: 100%; height: 32px; }
+
   /* ------------------------------------------------------------ schedule */
   .sheet {
     position: fixed; inset: 0; z-index: 10;
@@ -479,6 +506,19 @@
     </div>
   </footer>
 </main>
+
+<section class="samples" id="samples">
+  <div class="samples-inner">
+    <h2>Sample tracks</h2>
+    <p class="sub">early cuts · tell me what stays</p>
+    <p class="samples-note">
+      The station isn't reachable from this page yet — GitHub Pages can host
+      the site but not the live stream. These are the first tracks going into
+      rotation, so you can hear them here and say what should make the cut.
+    </p>
+    <div id="sampleList"></div>
+  </div>
+</section>
 
 <div class="sheet" id="sheet">
   <div class="sheet-inner">
@@ -775,6 +815,33 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches &&
     deck.style.setProperty("--py", "0px");
   });
 }
+
+/* --------------------------------------------------------------- samples
+
+   web/samples/manifest.json is written by scripts/import_trial_music.py —
+   {show, title, file} per track. Grouped in show order so the list reads
+   like the schedule, not like a folder listing. */
+async function renderSamples() {
+  let list;
+  try { list = await (await fetch("samples/manifest.json?t=" + Date.now())).json(); }
+  catch { return; }
+
+  const order = Object.keys(SHOWS).concat("any");
+  const byShow = {};
+  list.forEach(t => (byShow[t.show] ??= []).push(t));
+
+  document.getElementById("sampleList").innerHTML = order
+    .filter(show => byShow[show])
+    .map(show => {
+      const label = show === "any" ? "any time" : SHOWS[show].label;
+      const rows = byShow[show].map(t =>
+        `<div class="sample-row"><div class="title">${t.title}</div>` +
+        `<audio controls preload="none" src="samples/${t.file}"></audio></div>`
+      ).join("");
+      return `<div class="sample-group"><h3>${label}</h3>${rows}</div>`;
+    }).join("");
+}
+renderSamples();
 
 poll(); showNow();
 setInterval(poll, 5000);

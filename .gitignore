@@ -5,13 +5,21 @@
 # schedule.json on every run. Keeping them with .gitkeep placeholders looks
 # tidier and breaks the station: Liquidsoap's playlist retries the rejected
 # placeholder forever instead of treating the folder as empty.
-music/
+# Only the show subfolders (the audio), not music/ itself — CREDITS.md and
+# the prompt sheets are small text and worth keeping in history.
+music/*/
 drops/today/
 retired/
 
 # Original recordings, renders and mockups — large binaries that would bloat
 # history. Keep them backed up somewhere that isn't git.
 sources/
+
+# Raw AI-generated candidates and voice takes, pre-selection. What actually
+# makes air lives in music/ and drops/today/ (also untracked) or, for the
+# web samples, in web/samples/ (tracked). This folder is the working pile.
+trials/
+Audio_recorded/
 
 # Generated at runtime. logs/icecast.xml in particular is built from the
 # password in station.liq, so committing it would publish that password.

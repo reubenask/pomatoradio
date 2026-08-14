@@ -67,7 +67,7 @@ the weekend section below.
 
 **1. greeting** — Good morning, and welcome to Pomato Radio, one-thirty-point-three.
 Wherever you're starting from today, I'm glad you're here with me. Let's ease
-into it together.
+into it together. My name is Reuben ASK, stay tuned!
 
 **2. stay tuned** — You're listening to Pomato Radio. Stay with me — there's good
 music coming your way all morning.
@@ -89,7 +89,7 @@ brunch is next.
 one-thirty-point-three. Whether you're eating or just pretending to, you're in
 good company.
 
-**7. stay tuned** — Hope you're enjoying the music. Keep it right here — I've got
+**7. stay tuned** — Hope you're enjoying the music. Keep it right here, on this dial — I've got
 plenty more lined up for you.
 
 **8. break** — We'll pause for a short break. Stay close, I'll be right here when
