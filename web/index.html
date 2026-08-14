@@ -351,33 +351,6 @@
   .stats b { color: var(--ink); font-weight: 400; }
   .stats svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 
-  /* -------------------------------------------------------------- samples */
-  .samples { width: 100%; display: flex; justify-content: center; padding: 0 0 30px; }
-  .samples-inner { width: min(100%, 430px); padding: 0 4px; }
-  .samples h2 {
-    font-family: Georgia, serif; font-size: 19px; font-weight: 400;
-    margin-bottom: 3px; text-align: center;
-  }
-  .samples .sub {
-    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
-    color: var(--ink-dim); text-align: center; margin-bottom: 12px;
-  }
-  .samples-note {
-    font-size: 12px; line-height: 1.6; color: var(--ink-dim);
-    text-align: center; margin-bottom: 22px;
-  }
-  .sample-group + .sample-group { margin-top: 20px; }
-  .sample-group h3 {
-    font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase;
-    color: var(--ink-dim); margin-bottom: 8px;
-  }
-  .sample-row {
-    padding: 10px 0; border-bottom: 1px solid var(--line);
-  }
-  .sample-row:last-child { border-bottom: 0; }
-  .sample-row .title { font-family: Georgia, serif; font-size: 13.5px; margin-bottom: 7px; }
-  .sample-row audio { width: 100%; height: 32px; }
-
   /* ------------------------------------------------------------ schedule */
   .sheet {
     position: fixed; inset: 0; z-index: 10;
@@ -507,19 +480,6 @@
   </footer>
 </main>
 
-<section class="samples" id="samples">
-  <div class="samples-inner">
-    <h2>Sample tracks</h2>
-    <p class="sub">early cuts · tell me what stays</p>
-    <p class="samples-note">
-      The station isn't reachable from this page yet — GitHub Pages can host
-      the site but not the live stream. These are the first tracks going into
-      rotation, so you can hear them here and say what should make the cut.
-    </p>
-    <div id="sampleList"></div>
-  </div>
-</section>
-
 <div class="sheet" id="sheet">
   <div class="sheet-inner">
     <h2>Schedule</h2>
@@ -569,11 +529,10 @@ document.getElementById("mute").addEventListener("click", () => {
 function start() {
   failed = false;
   audio.src = STREAM + "?t=" + Date.now();
-  audio.play().then(() => setPlaying(true)).catch(err => {
-    fail(err && err.name === "NotAllowedError" ? "Press play again" : "Can't connect");
-  });
+  audio.play().then(() => setPlaying(true)).catch(() => startPreview());
 }
 function stop() {
+  preview = false;
   audio.pause();
   audio.removeAttribute("src");
   audio.load();
@@ -584,11 +543,83 @@ function toggle() { document.body.classList.contains("playing") ? stop() : start
 document.getElementById("play").addEventListener("click", toggle);
 document.getElementById("discBtn").addEventListener("click", toggle);
 
-/* Live radio has no "previous track" — the only honest seek is back to the
-   live edge, which a fresh request gives you. */
+/* Live has "jump to live"; preview has nothing to resync to, so it just
+   moves on to a different track — same button, the nearest honest meaning
+   in each mode. */
 document.getElementById("resync").addEventListener("click", () => {
-  if (document.body.classList.contains("playing")) { stop(); start(); }
+  if (!document.body.classList.contains("playing")) return;
+  if (preview) nextPreviewTrack();
+  else { stop(); start(); }
 });
+
+/* ---------------------------------------------------------- fallback mix
+   No live stream reaches this page on GitHub Pages, and the audience never
+   sees a track picker to work around that — real radio doesn't have one.
+   Press play and something is already going, the way turning on a radio
+   works: joined mid-track, one title at a time, next one picked when this
+   one ends. web/samples/manifest.json (written by
+   scripts/import_trial_music.py) is the pool; whichever show the schedule
+   says is on decides which slice of it plays. */
+let preview = false;
+let liveShow = null;
+let previewManifest = null;
+let previewQueue = [];
+
+async function loadPreviewManifest() {
+  if (previewManifest) return previewManifest;
+  try { previewManifest = await (await fetch("samples/manifest.json?t=" + Date.now())).json(); }
+  catch { previewManifest = []; }
+  return previewManifest;
+}
+
+function shuffle(list) {
+  const out = list.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+async function startPreview() {
+  const manifest = await loadPreviewManifest();
+  if (!manifest.length) { fail("Can't connect"); return; }
+
+  const pool = manifest.filter(t => t.show === liveShow);
+  previewQueue = shuffle(pool.length ? pool : manifest);
+  preview = true;
+  playPreviewTrack(true);
+}
+
+function nextPreviewTrack() {
+  previewQueue.push(previewQueue.shift());
+  playPreviewTrack(false);
+}
+
+function playPreviewTrack(joinMidway) {
+  const track = previewQueue[0];
+  switchingTrack = true;
+  audio.src = "samples/" + track.file;
+  const begin = () => {
+    if (joinMidway && track.duration > 6) {
+      audio.currentTime = Math.random() * (track.duration - 4);
+    }
+    audio.play().then(() => { switchingTrack = false; setPlaying(true); })
+      .catch(() => { switchingTrack = false; fail("Can't connect"); });
+  };
+  audio.addEventListener("loadedmetadata", begin, { once: true });
+  audio.load();
+  document.getElementById("now").textContent = track.title;
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title,
+      artist: "Pomato Radio 130.3",
+      artwork: [{ src: location.origin + "/label.png", sizes: "560x560", type: "image/png" }],
+    });
+  }
+}
+
+audio.addEventListener("ended", () => { if (preview) nextPreviewTrack(); });
 
 /* Someone who asked the OS for less motion gets the still, not a loop.
    Declared before setPlaying, which reads it — a const referenced from a
@@ -599,7 +630,7 @@ function setPlaying(on) {
   failed = false;
   document.body.classList.toggle("playing", on);
   document.body.classList.remove("offline");
-  stateEl.textContent = on ? "On air" : "Off air";
+  stateEl.textContent = on ? (preview ? "Previewing" : "On air") : "Off air";
   const label = on ? "Pause the stream" : "Play the stream";
   document.getElementById("play").setAttribute("aria-label", label);
   document.getElementById("discBtn").setAttribute("aria-label", label);
@@ -614,14 +645,19 @@ function setPlaying(on) {
 }
 function fail(msg) {
   failed = true;
+  preview = false;
   document.body.classList.remove("playing");
   document.body.classList.add("offline");
   stateEl.textContent = msg;
 }
 
 /* A rejected play() also fires `pause`; without the flag that handler wipes
-   the error message and the user is told nothing at all. */
-audio.addEventListener("pause",   () => { if (!failed) setPlaying(false); });
+   the error message and the user is told nothing at all. Swapping to the
+   next preview track fires it too — audio.load() pauses before the new
+   source is ready — and that one has to be ignored the same way, or the
+   station reads as stopping between every single track. */
+let switchingTrack = false;
+audio.addEventListener("pause",   () => { if (!failed && !switchingTrack) setPlaying(false); });
 audio.addEventListener("playing", () => setPlaying(true));
 audio.addEventListener("error",   () => {
   if (!audio.getAttribute("src")) return;
@@ -672,6 +708,7 @@ addEventListener("keydown", e => { if (e.key === "Escape") sheet.classList.remov
 let lastTrack = null;
 
 async function poll() {
+  if (preview) return;   // the preview rotation owns #now while it's playing
   try {
     const r = await fetch("nowplaying.txt?t=" + Date.now());
     const t = r.ok ? (await r.text()).trim() : "";
@@ -682,7 +719,7 @@ async function poll() {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: t || "Pomato Radio 130.3",
           artist: "Pomato Radio 130.3",
-          artwork: [{ src: location.origin + "label.png", sizes: "560x560", type: "image/png" }],
+          artwork: [{ src: location.origin + "/label.png", sizes: "560x560", type: "image/png" }],
         });
       }
     }
@@ -734,6 +771,7 @@ async function showNow() {
   try { s = await (await fetch("show.json?t=" + Date.now())).json(); }
   catch { s = localShow(); }
 
+  liveShow = s.show;
   document.documentElement.dataset.band = s.palette;
   document.getElementById("show").textContent = s.label;
   dressDisc(s.show, s.art, s.clip);
@@ -815,33 +853,6 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches &&
     deck.style.setProperty("--py", "0px");
   });
 }
-
-/* --------------------------------------------------------------- samples
-
-   web/samples/manifest.json is written by scripts/import_trial_music.py —
-   {show, title, file} per track. Grouped in show order so the list reads
-   like the schedule, not like a folder listing. */
-async function renderSamples() {
-  let list;
-  try { list = await (await fetch("samples/manifest.json?t=" + Date.now())).json(); }
-  catch { return; }
-
-  const order = Object.keys(SHOWS).concat("any");
-  const byShow = {};
-  list.forEach(t => (byShow[t.show] ??= []).push(t));
-
-  document.getElementById("sampleList").innerHTML = order
-    .filter(show => byShow[show])
-    .map(show => {
-      const label = show === "any" ? "any time" : SHOWS[show].label;
-      const rows = byShow[show].map(t =>
-        `<div class="sample-row"><div class="title">${t.title}</div>` +
-        `<audio controls preload="none" src="samples/${t.file}"></audio></div>`
-      ).join("");
-      return `<div class="sample-group"><h3>${label}</h3>${rows}</div>`;
-    }).join("");
-}
-renderSamples();
 
 poll(); showNow();
 setInterval(poll, 5000);

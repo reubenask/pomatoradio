@@ -2,101 +2,121 @@
   {
     "show": "firstlight",
     "title": "First Light Unfolding",
-    "file": "first-light-unfolding.mp3"
+    "file": "first-light-unfolding.mp3",
+    "duration": 60.0
   },
   {
     "show": "firstlight",
     "title": "Early Morning Stillness",
-    "file": "early-morning-stillness.mp3"
+    "file": "early-morning-stillness.mp3",
+    "duration": 69.6
   },
   {
     "show": "firstlight",
-    "title": "Sable Palm Drift (A)",
-    "file": "sable-palm-drift-a.mp3"
+    "title": "Sable Palm Drift",
+    "file": "sable-palm-drift.mp3",
+    "duration": 135.3
   },
   {
     "show": "firstlight",
-    "title": "Sable Palm Drift (B)",
-    "file": "sable-palm-drift-b.mp3"
+    "title": "Palm Line Horizon",
+    "file": "palm-line-horizon.mp3",
+    "duration": 59.8
   },
   {
     "show": "slowroll",
-    "title": "Blue Room Swing (A)",
-    "file": "blue-room-swing-a.mp3"
+    "title": "Blue Room Swing",
+    "file": "blue-room-swing.mp3",
+    "duration": 59.8
   },
   {
     "show": "slowroll",
-    "title": "Blue Room Swing (B)",
-    "file": "blue-room-swing-b.mp3"
+    "title": "Corner Booth Sway",
+    "file": "corner-booth-sway.mp3",
+    "duration": 59.8
   },
   {
     "show": "slowdrive",
-    "title": "Dusty Highway (A)",
-    "file": "dusty-highway-a.mp3"
+    "title": "Dusty Highway",
+    "file": "dusty-highway.mp3",
+    "duration": 223.7
   },
   {
     "show": "slowdrive",
-    "title": "Dusty Highway (B)",
-    "file": "dusty-highway-b.mp3"
+    "title": "Shoulder Lane Drift",
+    "file": "shoulder-lane-drift.mp3",
+    "duration": 235.2
   },
   {
     "show": "nightgarage",
     "title": "Follow The Rhythm",
-    "file": "follow-the-rhythm.mp3"
+    "file": "follow-the-rhythm.mp3",
+    "duration": 180.0
   },
   {
     "show": "nightgarage",
-    "title": "Velvet Circuit (A)",
-    "file": "velvet-circuit-a.mp3"
+    "title": "Velvet Circuit",
+    "file": "velvet-circuit.mp3",
+    "duration": 155.5
   },
   {
     "show": "nightgarage",
-    "title": "Velvet Circuit (B)",
-    "file": "velvet-circuit-b.mp3"
+    "title": "Low Voltage Blue",
+    "file": "low-voltage-blue.mp3",
+    "duration": 210.3
   },
   {
     "show": "nightgarage",
-    "title": "Velvet After Hours (A)",
-    "file": "velvet-after-hours-a.mp3"
+    "title": "Velvet After Hours",
+    "file": "velvet-after-hours.mp3",
+    "duration": 208.6
   },
   {
     "show": "nightgarage",
-    "title": "Velvet After Hours (B)",
-    "file": "velvet-after-hours-b.mp3"
+    "title": "Last Call Neon",
+    "file": "last-call-neon.mp3",
+    "duration": 214.2
   },
   {
     "show": "smallhours",
-    "title": "Blue Smoke Loop (A)",
-    "file": "blue-smoke-loop-a.mp3"
+    "title": "Blue Smoke Loop",
+    "file": "blue-smoke-loop.mp3",
+    "duration": 252.1
   },
   {
     "show": "smallhours",
-    "title": "Blue Smoke Loop (B)",
-    "file": "blue-smoke-loop-b.mp3"
+    "title": "Ashtray Hours",
+    "file": "ashtray-hours.mp3",
+    "duration": 239.0
   },
   {
     "show": "smallhours",
-    "title": "Late Night Receipt (A)",
-    "file": "late-night-receipt-a.mp3"
+    "title": "Late Night Receipt",
+    "file": "late-night-receipt.mp3",
+    "duration": 59.8
   },
   {
     "show": "smallhours",
-    "title": "Late Night Receipt (B)",
-    "file": "late-night-receipt-b.mp3"
+    "title": "Closing Tab",
+    "file": "closing-tab.mp3",
+    "duration": 59.8
   },
   {
     "show": "any",
-    "title": "Backroom Clean (A)",
-    "file": "backroom-clean-a.mp3"
+    "title": "Backroom Clean",
+    "file": "backroom-clean.mp3",
+    "duration": 171.8
   },
   {
     "show": "any",
-    "title": "Backroom Clean (B)",
-    "file": "backroom-clean-b.mp3"
+    "title": "Back Door Exit",
+    "file": "back-door-exit.mp3",
+    "duration": 213.3
   },
   {
     "show": "any",
     "title": "One Drop Nostalgia",
-    "file": "one-drop-nostalgia.mp3"
+    "file": "one-drop-nostalgia.mp3",
+    "duration": 240.0
   }
 ]
