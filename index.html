@@ -581,18 +581,38 @@ function shuffle(list) {
   return out;
 }
 
+/* Which show picks the pool is read straight off currentShow() — the
+   visitor's own clock, same function the header uses to guess the palette
+   before anything has loaded — rather than waiting on liveShow, which comes
+   from an async fetch that may not have resolved yet if someone hits play
+   fast. Every listener hears the show that fits their own local time, same
+   as the header already promised. */
+let previewShow = null;
+
+function buildPreviewQueue(manifest) {
+  previewShow = currentShow();
+  const pool = manifest.filter(t => t.show === previewShow);
+  return shuffle(pool.length ? pool : manifest);
+}
+
 async function startPreview() {
   const manifest = await loadPreviewManifest();
   if (!manifest.length) { fail("Can't connect"); return; }
 
-  const pool = manifest.filter(t => t.show === liveShow);
-  previewQueue = shuffle(pool.length ? pool : manifest);
+  previewQueue = buildPreviewQueue(manifest);
   preview = true;
   playPreviewTrack(true);
 }
 
 function nextPreviewTrack() {
-  previewQueue.push(previewQueue.shift());
+  /* Re-checked on every track change, not just at the start — a session
+     that runs long enough to cross a show boundary should drift into the
+     new show's pool the same way the real station would. */
+  if (currentShow() !== previewShow) {
+    previewQueue = buildPreviewQueue(previewManifest);
+  } else {
+    previewQueue.push(previewQueue.shift());
+  }
   playPreviewTrack(false);
 }
 
