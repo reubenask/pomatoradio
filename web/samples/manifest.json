@@ -313,5 +313,54 @@
     "file": "low-rim-static.mp3",
     "duration": 164.8,
     "bpm": 129.2
+  },
+  {
+    "show": "househours",
+    "title": "Put It On",
+    "file": "put-it-on.mp3",
+    "duration": 60.0,
+    "bpm": 125.1
+  },
+  {
+    "show": "househours",
+    "title": "Redlight",
+    "file": "redlight.mp3",
+    "duration": 240.0,
+    "bpm": 125.0
+  },
+  {
+    "show": "househours",
+    "title": "Skyline",
+    "file": "skyline.mp3",
+    "duration": 184.3,
+    "bpm": 125.7
+  },
+  {
+    "show": "househours",
+    "title": "Sunrise",
+    "file": "sunrise.mp3",
+    "duration": 176.6,
+    "bpm": 125.5
+  },
+  {
+    "show": "househours",
+    "title": "Helper",
+    "file": "helper.mp3",
+    "duration": 60.0,
+    "bpm": 124.6
+  },
+  {
+    "show": "househours",
+    "title": "Midnight Call",
+    "file": "midnight-call.mp3",
+    "duration": 172.8,
+    "bpm": 125.3
+  },
+  {
+    "show": "househours",
+    "title": "Not The Same",
+    "file": "not-the-same.mp3",
+    "duration": 176.6,
+    "bpm": 125.5
   }
 ]
