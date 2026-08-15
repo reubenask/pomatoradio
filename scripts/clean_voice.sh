@@ -48,7 +48,23 @@ TARGET_LRA=7
 #                  31dB. Threshold stops at -31dB deliberately; higher chews
 #                  quiet consonants and breath tails
 #   alimiter       catch peaks without letting them clip
-CHAIN="silenceremove=start_periods=1:start_duration=0.1:start_silence=0.15:start_threshold=-36dB:detection=rms,\
+#
+# adeclip goes in front of all of it, and only for takes that actually
+# clipped — recorded too hot, not just a peak that happens to touch 0dB.
+# astats' "Flat factor" is the tell: it counts runs of consecutive
+# identical samples, which is what a clipped waveform's flat-topped peaks
+# look like and a merely loud one doesn't have. Running adeclip on a take
+# that never clipped does nothing useful and risks smearing transients for
+# no reason, so it's conditional rather than always-on.
+FLAT=$(ffmpeg -hide_banner -nostats -i "$IN" -af astats=metadata=1 -f null /dev/null 2>&1 \
+  | grep -m1 "Flat factor" | sed 's/.*: *//')
+DECLIP=""
+if [ -n "$FLAT" ] && awk "BEGIN{exit !($FLAT > 0)}"; then
+  echo "  clipping detected (flat factor ${FLAT}) — de-clipping before the rest of the chain"
+  DECLIP="adeclip,"
+fi
+
+CHAIN="${DECLIP}silenceremove=start_periods=1:start_duration=0.1:start_silence=0.15:start_threshold=-36dB:detection=rms,\
 areverse,\
 silenceremove=start_periods=1:start_duration=0.1:start_silence=0.25:start_threshold=-36dB:detection=rms,\
 areverse,\
