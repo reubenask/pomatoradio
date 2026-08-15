@@ -743,9 +743,9 @@ armEndedBackstop(audioB);
    The real station picks a drop at random and ducks the music under it
    (station.liq's smooth_add); this fallback does the same, on its own
    timer since there's no Liquidsoap here to drive it. The interval isn't
-   fixed — it cycles 45/60 minutes and repeats, so it doesn't fall into a
+   fixed — it cycles 30/45/60 minutes and repeats, so it doesn't fall into a
    metronome-like pattern a listener starts to anticipate. */
-const DROP_CYCLE_MIN = [45, 60];
+const DROP_CYCLE_MIN = [30, 45, 60];
 const START_DROP_FILE = "drop-the-start.mp3";
 let dropCycleIdx = 0;
 let dropTimer = null;
@@ -761,9 +761,10 @@ async function loadDropsManifest() {
 
 /* New listener greeting: "the start" plays once, sometime in the first 5
    minutes rather than at a fixed instant — real enough that it doesn't feel
-   like it's firing on a stopwatch — then the regular 45/60 cycle takes
-   over. Only fires from startPreview(), never from the regular rotation, so
-   it can't land 90 minutes into a session out of nowhere. */
+   like it's firing on a stopwatch — then the regular 30/45/60 cycle takes
+   over. It's back in the regular rotation pool too (Reuben wants every
+   drop reachable just by listening, not only the greeting once per
+   session) — so it can still turn up again later, same odds as the rest. */
 function scheduleStartDrop() {
   clearTimeout(dropTimer);
   const delay = (30 + Math.random() * (5 * 60 - 30)) * 1000;   // 30s .. 5min
@@ -781,10 +782,7 @@ async function playDrop(forceFile) {
   if (!preview) return;                  // stopped since this was scheduled
   let file = forceFile;
   if (!file) {
-    // The start drop is a one-time greeting, not part of the regular pool
-    // — playing "welcome, you've just tuned in" two hours into a session
-    // would be a strange thing to hear.
-    const list = (await loadDropsManifest()).filter(d => d.file !== START_DROP_FILE);
+    const list = await loadDropsManifest();
     if (!list.length) { scheduleDrop(); return; }
     let pick;
     do { pick = list[Math.floor(Math.random() * list.length)]; }
