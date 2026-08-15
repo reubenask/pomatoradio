@@ -638,15 +638,27 @@ function tempoOrder(pool) {
   return sorted.slice(at).concat(sorted.slice(0, at));
 }
 
+/* TEMPORARY: most shows still only have a handful of tracks (some, none),
+   so partitioning strictly by show means whichever few a slot has just
+   cycle among themselves for that show's whole run — which is exactly what
+   "the new songs are all grouped together" was: saturdaysoul, hiphop and
+   trap contain only the newest batch, nothing older, so landing in one of
+   those hours meant hearing only new tracks, correctly tempo-sorted among
+   themselves but still an isolated pool. Until there's enough per-show
+   density for that partitioning to do something useful, tempo similarity
+   matters more than genre matching — the whole catalog is one pool. Flip
+   this back to true once the schedule has real per-show coverage. */
+const PARTITION_BY_SHOW = false;
+
 /* Which show picks the pool is read straight off currentShow() — the
    visitor's own clock, same function the header uses to guess the palette
    before anything has loaded — rather than waiting on liveShow, which comes
    from an async fetch that may not have resolved yet if someone hits play
    fast. Every listener hears the show that fits their own local time, same
-   as the header already promised. */
+   as the header already promised — once PARTITION_BY_SHOW is back on. */
 function buildPreviewQueue(manifest) {
   previewShow = currentShow();
-  const pool = manifest.filter(t => t.show === previewShow);
+  const pool = PARTITION_BY_SHOW ? manifest.filter(t => t.show === previewShow) : manifest;
   return tempoOrder(pool.length ? pool : manifest);
 }
 
