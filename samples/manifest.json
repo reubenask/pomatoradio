@@ -194,5 +194,82 @@
     "file": "brandish.mp3",
     "duration": 231.3,
     "bpm": 140.6
+  },
+  {
+    "show": "afrofriday",
+    "title": "Golden Hour Groove",
+    "file": "golden-hour-groove.mp3",
+    "duration": 227.2,
+    "bpm": 111.9
+  },
+  {
+    "show": "househours",
+    "title": "Midnight Pulse",
+    "file": "midnight-pulse.mp3",
+    "duration": 243.9,
+    "bpm": 123.2
+  },
+  {
+    "show": "trap",
+    "title": "Midnight Pulse (Trap Mix)",
+    "file": "midnight-pulse-trap-mix.mp3",
+    "duration": 207.3,
+    "bpm": 136.1
+  },
+  {
+    "show": "hiphop",
+    "title": "Midnight Wax Pocket",
+    "file": "midnight-wax-pocket.mp3",
+    "duration": 229.6,
+    "bpm": 105.6
+  },
+  {
+    "show": "hiphop",
+    "title": "Wax Pocket After Dark",
+    "file": "wax-pocket-after-dark.mp3",
+    "duration": 251.4,
+    "bpm": 98.0
+  },
+  {
+    "show": "afrofriday",
+    "title": "Palm Groove",
+    "file": "palm-groove.mp3",
+    "duration": 192.6,
+    "bpm": 101.8
+  },
+  {
+    "show": "afrofriday",
+    "title": "Coastal Palm Sway",
+    "file": "coastal-palm-sway.mp3",
+    "duration": 159.3,
+    "bpm": 103.7
+  },
+  {
+    "show": "afrofriday",
+    "title": "Palmwine Neon",
+    "file": "palmwine-neon.mp3",
+    "duration": 244.9,
+    "bpm": 123.1
+  },
+  {
+    "show": "hiphop",
+    "title": "Velvet Loop",
+    "file": "velvet-loop.mp3",
+    "duration": 113.0,
+    "bpm": 97.1
+  },
+  {
+    "show": "hiphop",
+    "title": "Amber Loop Drift",
+    "file": "amber-loop-drift.mp3",
+    "duration": 233.0,
+    "bpm": 105.1
+  },
+  {
+    "show": "trap",
+    "title": "Velvet Smoke Loop",
+    "file": "velvet-smoke-loop.mp3",
+    "duration": 194.9,
+    "bpm": 130.2
   }
 ]
