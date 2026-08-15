@@ -42,105 +42,105 @@
     "bpm": 119.7
   },
   {
-    "show": "slowdrive",
+    "show": "country",
     "title": "Dusty Highway",
     "file": "dusty-highway.mp3",
     "duration": 223.7,
     "bpm": 136.3
   },
   {
-    "show": "slowdrive",
+    "show": "country",
     "title": "Shoulder Lane Drift",
     "file": "shoulder-lane-drift.mp3",
     "duration": 235.2,
     "bpm": 83.8
   },
   {
-    "show": "nightgarage",
+    "show": "afrofriday",
     "title": "Follow The Rhythm",
     "file": "follow-the-rhythm.mp3",
     "duration": 180.0,
     "bpm": 108.8
   },
   {
-    "show": "nightgarage",
+    "show": "hiphop",
     "title": "Velvet Circuit",
     "file": "velvet-circuit.mp3",
     "duration": 155.5,
     "bpm": 93.1
   },
   {
-    "show": "nightgarage",
+    "show": "hiphop",
     "title": "Low Voltage Blue",
     "file": "low-voltage-blue.mp3",
     "duration": 210.3,
     "bpm": 97.7
   },
   {
-    "show": "nightgarage",
+    "show": "smallhours",
     "title": "Velvet After Hours",
     "file": "velvet-after-hours.mp3",
     "duration": 208.6,
     "bpm": 136.2
   },
   {
-    "show": "nightgarage",
+    "show": "smallhours",
     "title": "Last Call Neon",
     "file": "last-call-neon.mp3",
     "duration": 214.2,
     "bpm": 129.9
   },
   {
-    "show": "smallhours",
+    "show": "slowroll",
     "title": "Blue Smoke Loop",
     "file": "blue-smoke-loop.mp3",
     "duration": 252.1,
     "bpm": 93.6
   },
   {
-    "show": "smallhours",
+    "show": "slowroll",
     "title": "Ashtray Hours",
     "file": "ashtray-hours.mp3",
     "duration": 239.0,
     "bpm": 81.4
   },
   {
-    "show": "smallhours",
+    "show": "saturdaysoul",
     "title": "Late Night Receipt",
     "file": "late-night-receipt.mp3",
     "duration": 59.8,
     "bpm": 107.4
   },
   {
-    "show": "smallhours",
+    "show": "saturdaysoul",
     "title": "Closing Tab",
     "file": "closing-tab.mp3",
     "duration": 59.8,
     "bpm": 126.1
   },
   {
-    "show": "any",
+    "show": "hiphop",
     "title": "Backroom Clean",
     "file": "backroom-clean.mp3",
     "duration": 171.8,
     "bpm": 107.4
   },
   {
-    "show": "any",
+    "show": "hiphop",
     "title": "Back Door Exit",
     "file": "back-door-exit.mp3",
     "duration": 213.3,
     "bpm": 99.3
   },
   {
-    "show": "any",
+    "show": "firstlight",
     "title": "One Drop Nostalgia",
     "file": "one-drop-nostalgia.mp3",
     "duration": 240.0,
     "bpm": 129.3
   },
   {
-    "show": "saturdaysoul",
+    "show": "hiphop",
     "title": "\u5e72\u676f",
     "file": "ganbei.mp3",
     "duration": 190.0,
@@ -154,21 +154,21 @@
     "bpm": 115.8
   },
   {
-    "show": "saturdaysoul",
+    "show": "afrofriday",
     "title": "No More Games",
     "file": "no-more-games.mp3",
     "duration": 188.3,
     "bpm": 109.6
   },
   {
-    "show": "hiphop",
+    "show": "trap",
     "title": "We Don't Lose",
     "file": "we-don-t-lose.mp3",
     "duration": 227.7,
     "bpm": 145.5
   },
   {
-    "show": "hiphop",
+    "show": "afrofriday",
     "title": "Believe",
     "file": "believe.mp3",
     "duration": 146.0,
@@ -182,7 +182,7 @@
     "bpm": 96.1
   },
   {
-    "show": "any",
+    "show": "afrofriday",
     "title": "So Naa",
     "file": "so-naa.mp3",
     "duration": 216.2,

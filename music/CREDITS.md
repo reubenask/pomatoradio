@@ -7,22 +7,32 @@ Every track here is used under the licence shown. CC BY and BY-SA require this a
 Generated 2026-08-14, first batch for sample-audience feedback. Original
 instrumental work — no third-party rights to clear. Filed under
 `trials/trial music/` before import; `scripts/import_trial_music.py` has the
-exact source-filename → show mapping if any need re-tracing.
+original source-filename mapping if it's ever needed. Show placement below
+was corrected 2026-08-15 by ear (`scripts/reassign_shows.py`) — the initial
+pass was a title/tempo guess and several landed wrong.
 
 | show | track |
 |---|---|
 | firstlight | First Light Unfolding |
 | firstlight | Early Morning Stillness |
-| firstlight | Sable Palm Drift (A) / (B) |
-| slowroll | Blue Room Swing (A) / (B) |
-| slowdrive | Dusty Highway (A) / (B) |
-| nightgarage | Follow The Rhythm |
-| nightgarage | Velvet Circuit (A) / (B) |
-| nightgarage | Velvet After Hours (A) / (B) |
-| smallhours | Blue Smoke Loop (A) / (B) |
-| smallhours | Late Night Receipt (A) / (B) |
-| any | Backroom Clean (A) / (B) |
-| any | One Drop Nostalgia |
+| firstlight | Sable Palm Drift |
+| firstlight | Palm Line Horizon |
+| firstlight | One Drop Nostalgia |
+| slowroll | Blue Room Swing |
+| slowroll | Corner Booth Sway |
+| slowroll | Blue Smoke Loop |
+| slowroll | Ashtray Hours |
+| country | Dusty Highway |
+| country | Shoulder Lane Drift |
+| afrofriday | Follow The Rhythm |
+| hiphop | Velvet Circuit |
+| hiphop | Low Voltage Blue |
+| hiphop | Backroom Clean |
+| hiphop | Back Door Exit |
+| smallhours | Velvet After Hours |
+| smallhours | Last Call Neon |
+| saturdaysoul | Late Night Receipt |
+| saturdaysoul | Closing Tab |
 
 The three archive.org CC tracks from the first library pass (Emil Sketch No2,
 Ubuibi Gaspump, Steamflow Childhood) were pulled from `music/smallhours/` when
