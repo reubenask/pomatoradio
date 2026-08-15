@@ -271,5 +271,47 @@
     "file": "velvet-smoke-loop.mp3",
     "duration": 194.9,
     "bpm": 130.2
+  },
+  {
+    "show": "trap",
+    "title": "Chrome Habit",
+    "file": "chrome-habit.mp3",
+    "duration": 128.6,
+    "bpm": 130.4
+  },
+  {
+    "show": "trap",
+    "title": "Static Habit",
+    "file": "static-habit.mp3",
+    "duration": 198.9,
+    "bpm": 146.1
+  },
+  {
+    "show": "trap",
+    "title": "Chrome Pulse",
+    "file": "chrome-pulse.mp3",
+    "duration": 140.6,
+    "bpm": 105.0
+  },
+  {
+    "show": "trap",
+    "title": "Neon Pulse Drift",
+    "file": "neon-pulse-drift.mp3",
+    "duration": 126.9,
+    "bpm": 130.8
+  },
+  {
+    "show": "trap",
+    "title": "Velvet Rim",
+    "file": "velvet-rim.mp3",
+    "duration": 254.5,
+    "bpm": 103.7
+  },
+  {
+    "show": "trap",
+    "title": "Low Rim Static",
+    "file": "low-rim-static.mp3",
+    "duration": 164.8,
+    "bpm": 129.2
   }
 ]

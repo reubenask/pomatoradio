@@ -582,7 +582,6 @@ function stop() {
   decks.forEach((d, i) => { clearCrossfadeTimer(i); d.pause(); d.removeAttribute("src"); d.load(); });
   clearTimeout(dropTimer);
   dropTimer = null;
-  dropCycleIdx = 0;
   ducked = false;
   dropDeck.pause();
   dropDeck.removeAttribute("src");
@@ -680,7 +679,6 @@ async function startPreview() {
   preview = true;
   deckIdx = 0;
   playFirstPreviewTrack();
-  dropCycleIdx = 0;
   scheduleStartDrop();
 }
 
@@ -742,12 +740,14 @@ armEndedBackstop(audioB);
 /* --------------------------------------------------------------- drops
    The real station picks a drop at random and ducks the music under it
    (station.liq's smooth_add); this fallback does the same, on its own
-   timer since there's no Liquidsoap here to drive it. The interval isn't
-   fixed — it cycles 30/45/60 minutes and repeats, so it doesn't fall into a
-   metronome-like pattern a listener starts to anticipate. */
-const DROP_CYCLE_MIN = [30, 45, 60];
+   timer since there's no Liquidsoap here to drive it. The interval used to
+   cycle a fixed 30/45/60 sequence, repeating — still a pattern a listener
+   could learn given enough time. Each wait is now picked fresh and
+   independently within the same overall range, so there's no rhythm to it
+   at all: could be 32 minutes, then 58, then 21. */
+const DROP_MIN_MINUTES = 30;
+const DROP_MAX_MINUTES = 60;
 const START_DROP_FILE = "drop-the-start.mp3";
-let dropCycleIdx = 0;
 let dropTimer = null;
 let dropsManifest = null;
 let lastDropFile = null;
@@ -773,8 +773,7 @@ function scheduleStartDrop() {
 
 function scheduleDrop() {
   clearTimeout(dropTimer);
-  const mins = DROP_CYCLE_MIN[dropCycleIdx % DROP_CYCLE_MIN.length];
-  dropCycleIdx++;
+  const mins = DROP_MIN_MINUTES + Math.random() * (DROP_MAX_MINUTES - DROP_MIN_MINUTES);
   dropTimer = setTimeout(() => playDrop(), mins * 60 * 1000);
 }
 
