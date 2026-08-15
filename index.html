@@ -566,7 +566,7 @@ function start() {
 function stop() {
   preview = false;
   crossfading = false;
-  decks.forEach((d, i) => { clearCrossfadeWatch(i); d.pause(); d.removeAttribute("src"); d.load(); });
+  decks.forEach((d, i) => { clearCrossfadeTimer(i); d.pause(); d.removeAttribute("src"); d.load(); });
   setPlaying(false);
 }
 function toggle() { document.body.classList.contains("playing") ? stop() : start(); }
@@ -661,35 +661,49 @@ function updateNowPlaying(track) {
   }
 }
 
-/* Arms a one-shot watch on the front deck: once it's within CROSSFADE
-   seconds of its own end, start fading the next track in under it. A
-   timeupdate check rather than a setTimeout scheduled off the track's
-   duration, because currentTime is the actual playback position — robust
-   to whatever offset joinMidway started at.
+/* Schedules the crossfade off a setTimeout, computed once from the actual
+   playback position rather than polled via timeupdate. It used to be the
+   other way round — checking currentTime on every timeupdate tick felt more
+   "live" — but timeupdate throttles hard in a backgrounded or unfocused
+   tab (measured directly: a track that plays for 8+ real seconds fired it
+   twice, both readings identical, then nothing until the track's natural
+   end). A radio tab spends most of its life backgrounded — that's the whole
+   point of a radio — so a trigger that only works while the tab is in the
+   foreground was really only working sometimes, which matches "it works for
+   some" exactly. setTimeout keeps firing regardless.
 
-   watchHandlers tracks the live listener per deck index so a manual skip
-   (resync, mid-track) can clear the old one — decks are two long-lived
+   crossfadeTimers tracks the live timer per deck index so a manual skip
+   (resync, mid-track) can cancel the old one — decks are two long-lived
    elements taking turns as "front", and without this a deck that's skipped
-   before its watch ever fires keeps that listener forever, stacking a fresh
-   one on top of it every time the deck comes back around. */
-const watchHandlers = [null, null];
-function clearCrossfadeWatch(idx) {
-  if (watchHandlers[idx]) decks[idx].removeEventListener("timeupdate", watchHandlers[idx]);
-  watchHandlers[idx] = null;
+   before its timer ever fires keeps counting down in the background and
+   fires a stray crossfade later, on top of whatever's playing by then. */
+const crossfadeTimers = [null, null];
+function clearCrossfadeTimer(idx) {
+  if (crossfadeTimers[idx]) clearTimeout(crossfadeTimers[idx]);
+  crossfadeTimers[idx] = null;
 }
-function armCrossfadeWatch(deck) {
+function scheduleCrossfade(deck) {
   const idx = decks.indexOf(deck);
-  clearCrossfadeWatch(idx);
-  function onTime() {
-    if (crossfading) return;
-    if (deck.duration && deck.currentTime >= deck.duration - CROSSFADE) {
-      clearCrossfadeWatch(idx);
-      beginCrossfade();
-    }
-  }
-  watchHandlers[idx] = onTime;
-  deck.addEventListener("timeupdate", onTime);
+  clearCrossfadeTimer(idx);
+  const remaining = (deck.duration || 0) - deck.currentTime;
+  const delay = Math.max(0, (remaining - CROSSFADE) * 1000);
+  crossfadeTimers[idx] = setTimeout(() => {
+    crossfadeTimers[idx] = null;
+    if (!crossfading) beginCrossfade();
+  }, delay);
 }
+
+/* Backstop for the timer landing late anyway — a clamped background tab, a
+   duration that read wrong, anything. Without this the alternative on a
+   missed schedule is dead air: the track just stops and nothing is
+   listening for it to. A late crossfade beats a silent one. */
+function armEndedBackstop(deck) {
+  deck.addEventListener("ended", () => {
+    if (preview && decks[deckIdx] === deck && !crossfading) beginCrossfade();
+  });
+}
+armEndedBackstop(audio);
+armEndedBackstop(audioB);
 
 function playFirstPreviewTrack() {
   const track = previewQueue[0];
@@ -703,7 +717,7 @@ function playFirstPreviewTrack() {
     deck.play().then(() => {
       switchingTrack = false;
       setPlaying(true);
-      armCrossfadeWatch(deck);
+      scheduleCrossfade(deck);
     }).catch(() => { switchingTrack = false; fail("Can't connect"); });
   });
   deck.load();
@@ -717,7 +731,7 @@ function beginCrossfade() {
   const inDeck = decks[inIdx];
   const track = pickNextTrack();
 
-  clearCrossfadeWatch(deckIdx);
+  clearCrossfadeTimer(deckIdx);
   crossfading = true;
   fadeT = 0;
   inDeck.src = "samples/" + track.file;
@@ -727,22 +741,30 @@ function beginCrossfade() {
   inDeck.play().catch(() => {});
   updateNowPlaying(track);
 
+  // setInterval, not requestAnimationFrame — rAF is tied to compositing and
+  // a backgrounded tab stops receiving frames at all, which was the second
+  // half of this bug: the trigger fired on schedule but the fade itself then
+  // sat frozen at fadeT=0 forever, one deck stuck silent and the other stuck
+  // at full volume, because nothing was ever calling step() again. A
+  // backgrounded tab still throttles setInterval, just to a coarse ~1s
+  // floor rather than pausing outright — a choppier fade beats a stuck one.
   const start = performance.now(), ms = CROSSFADE * 1000;
-  function step(now) {
-    if (!crossfading) return;                 // stop() cut in mid-fade
-    fadeT = Math.min(1, (now - start) / ms);
+  const timer = setInterval(step, 100);
+  function step() {
+    if (!crossfading) { clearInterval(timer); return; }   // stop() cut in mid-fade
+    fadeT = Math.min(1, (performance.now() - start) / ms);
     outDeck.volume = masterVol * (1 - fadeT);
     inDeck.volume = masterVol * fadeT;
-    if (fadeT < 1) { requestAnimationFrame(step); return; }
+    if (fadeT < 1) return;
+    clearInterval(timer);
 
     deckIdx = inIdx;                           // flip before pausing outDeck,
     crossfading = false; fadeT = 0;            // so its pause event is ignored
     outDeck.pause();
     outDeck.removeAttribute("src");
     outDeck.load();
-    armCrossfadeWatch(inDeck);
+    scheduleCrossfade(inDeck);
   }
-  requestAnimationFrame(step);
 }
 
 /* Someone who asked the OS for less motion gets the still, not a loop.
