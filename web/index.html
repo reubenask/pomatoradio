@@ -681,7 +681,7 @@ async function startPreview() {
   deckIdx = 0;
   playFirstPreviewTrack();
   dropCycleIdx = 0;
-  scheduleDrop();
+  scheduleStartDrop();
 }
 
 function updateNowPlaying(track) {
@@ -743,9 +743,10 @@ armEndedBackstop(audioB);
    The real station picks a drop at random and ducks the music under it
    (station.liq's smooth_add); this fallback does the same, on its own
    timer since there's no Liquidsoap here to drive it. The interval isn't
-   fixed — it cycles 30/45/60 minutes and repeats, so it doesn't fall into
-   a metronome-like pattern a listener starts to anticipate. */
-const DROP_CYCLE_MIN = [30, 45, 60];
+   fixed — it cycles 45/60 minutes and repeats, so it doesn't fall into a
+   metronome-like pattern a listener starts to anticipate. */
+const DROP_CYCLE_MIN = [45, 60];
+const START_DROP_FILE = "drop-the-start.mp3";
 let dropCycleIdx = 0;
 let dropTimer = null;
 let dropsManifest = null;
@@ -758,26 +759,43 @@ async function loadDropsManifest() {
   return dropsManifest;
 }
 
+/* New listener greeting: "the start" plays once, sometime in the first 5
+   minutes rather than at a fixed instant — real enough that it doesn't feel
+   like it's firing on a stopwatch — then the regular 45/60 cycle takes
+   over. Only fires from startPreview(), never from the regular rotation, so
+   it can't land 90 minutes into a session out of nowhere. */
+function scheduleStartDrop() {
+  clearTimeout(dropTimer);
+  const delay = (30 + Math.random() * (5 * 60 - 30)) * 1000;   // 30s .. 5min
+  dropTimer = setTimeout(() => playDrop(START_DROP_FILE), delay);
+}
+
 function scheduleDrop() {
   clearTimeout(dropTimer);
   const mins = DROP_CYCLE_MIN[dropCycleIdx % DROP_CYCLE_MIN.length];
   dropCycleIdx++;
-  dropTimer = setTimeout(playDrop, mins * 60 * 1000);
+  dropTimer = setTimeout(() => playDrop(), mins * 60 * 1000);
 }
 
-async function playDrop() {
+async function playDrop(forceFile) {
   if (!preview) return;                  // stopped since this was scheduled
-  const list = await loadDropsManifest();
-  if (!list.length) { scheduleDrop(); return; }
-
-  let pick;
-  do { pick = list[Math.floor(Math.random() * list.length)]; }
-  while (list.length > 1 && pick.file === lastDropFile);
-  lastDropFile = pick.file;
+  let file = forceFile;
+  if (!file) {
+    // The start drop is a one-time greeting, not part of the regular pool
+    // — playing "welcome, you've just tuned in" two hours into a session
+    // would be a strange thing to hear.
+    const list = (await loadDropsManifest()).filter(d => d.file !== START_DROP_FILE);
+    if (!list.length) { scheduleDrop(); return; }
+    let pick;
+    do { pick = list[Math.floor(Math.random() * list.length)]; }
+    while (list.length > 1 && pick.file === lastDropFile);
+    lastDropFile = pick.file;
+    file = pick.file;
+  }
 
   ducked = true;
   applyVolume();
-  dropDeck.src = "samples/" + pick.file;
+  dropDeck.src = "samples/" + file;
   dropDeck.currentTime = 0;
   dropDeck.volume = masterVol;
   dropDeck.load();
