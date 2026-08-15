@@ -3,120 +3,140 @@
     "show": "firstlight",
     "title": "First Light Unfolding",
     "file": "first-light-unfolding.mp3",
-    "duration": 60.0
+    "duration": 60.0,
+    "bpm": 100.3
   },
   {
     "show": "firstlight",
     "title": "Early Morning Stillness",
     "file": "early-morning-stillness.mp3",
-    "duration": 69.6
+    "duration": 69.6,
+    "bpm": 113.2
   },
   {
     "show": "firstlight",
     "title": "Sable Palm Drift",
     "file": "sable-palm-drift.mp3",
-    "duration": 135.3
+    "duration": 135.3,
+    "bpm": 121.7
   },
   {
     "show": "firstlight",
     "title": "Palm Line Horizon",
     "file": "palm-line-horizon.mp3",
-    "duration": 59.8
+    "duration": 59.8,
+    "bpm": 143.6
   },
   {
     "show": "slowroll",
     "title": "Blue Room Swing",
     "file": "blue-room-swing.mp3",
-    "duration": 59.8
+    "duration": 59.8,
+    "bpm": 124.0
   },
   {
     "show": "slowroll",
     "title": "Corner Booth Sway",
     "file": "corner-booth-sway.mp3",
-    "duration": 59.8
+    "duration": 59.8,
+    "bpm": 119.7
   },
   {
     "show": "slowdrive",
     "title": "Dusty Highway",
     "file": "dusty-highway.mp3",
-    "duration": 223.7
+    "duration": 223.7,
+    "bpm": 136.3
   },
   {
     "show": "slowdrive",
     "title": "Shoulder Lane Drift",
     "file": "shoulder-lane-drift.mp3",
-    "duration": 235.2
+    "duration": 235.2,
+    "bpm": 83.8
   },
   {
     "show": "nightgarage",
     "title": "Follow The Rhythm",
     "file": "follow-the-rhythm.mp3",
-    "duration": 180.0
+    "duration": 180.0,
+    "bpm": 108.8
   },
   {
     "show": "nightgarage",
     "title": "Velvet Circuit",
     "file": "velvet-circuit.mp3",
-    "duration": 155.5
+    "duration": 155.5,
+    "bpm": 93.1
   },
   {
     "show": "nightgarage",
     "title": "Low Voltage Blue",
     "file": "low-voltage-blue.mp3",
-    "duration": 210.3
+    "duration": 210.3,
+    "bpm": 97.7
   },
   {
     "show": "nightgarage",
     "title": "Velvet After Hours",
     "file": "velvet-after-hours.mp3",
-    "duration": 208.6
+    "duration": 208.6,
+    "bpm": 136.2
   },
   {
     "show": "nightgarage",
     "title": "Last Call Neon",
     "file": "last-call-neon.mp3",
-    "duration": 214.2
+    "duration": 214.2,
+    "bpm": 129.9
   },
   {
     "show": "smallhours",
     "title": "Blue Smoke Loop",
     "file": "blue-smoke-loop.mp3",
-    "duration": 252.1
+    "duration": 252.1,
+    "bpm": 93.6
   },
   {
     "show": "smallhours",
     "title": "Ashtray Hours",
     "file": "ashtray-hours.mp3",
-    "duration": 239.0
+    "duration": 239.0,
+    "bpm": 81.4
   },
   {
     "show": "smallhours",
     "title": "Late Night Receipt",
     "file": "late-night-receipt.mp3",
-    "duration": 59.8
+    "duration": 59.8,
+    "bpm": 107.4
   },
   {
     "show": "smallhours",
     "title": "Closing Tab",
     "file": "closing-tab.mp3",
-    "duration": 59.8
+    "duration": 59.8,
+    "bpm": 126.1
   },
   {
     "show": "any",
     "title": "Backroom Clean",
     "file": "backroom-clean.mp3",
-    "duration": 171.8
+    "duration": 171.8,
+    "bpm": 107.4
   },
   {
     "show": "any",
     "title": "Back Door Exit",
     "file": "back-door-exit.mp3",
-    "duration": 213.3
+    "duration": 213.3,
+    "bpm": 99.3
   },
   {
     "show": "any",
     "title": "One Drop Nostalgia",
     "file": "one-drop-nostalgia.mp3",
-    "duration": 240.0
+    "duration": 240.0,
+    "bpm": 129.3
   }
 ]
