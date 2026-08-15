@@ -16,8 +16,8 @@ schedule.json         the seven shows: names, hours, and what each sounds like
 
 scripts/
   clean_voice.sh      raw recording → broadcast-ready drop
-  speak_drops.py      speak .txt drops with TTS — no Claude, no key
-  generate_drops.py   Claude writes the day's drops, TTS speaks them
+  speak_drops.py      speak .txt drops with TTS — no external LLM or key
+  generate_drops.py   drops written by reubenask; TTS speaks them
   tts.py              TTS adapter (macOS `say`, or ElevenLabs)
   serve_web.py        serves the player page
   stream_to_youtube.sh  optional: audio + looping visual → YouTube Live
@@ -80,8 +80,7 @@ Station ID, track credit, a line about the hour. Pre-recorded, dropped into the
 stream between records. The station plays `.wav` files out of `drops/today/` and
 does not care where they came from.
 
-**Recording them yourself needs none of the rest of this.** No Claude, no
-ElevenLabs, no API keys, nothing to pay for:
+**Recording them yourself needs none of the rest of this.** Drops are written by reubenask; no external LLMs, no ElevenLabs, no API keys, nothing to pay for:
 
 ```bash
 # record straight into a show folder, or drag files in from anywhere
@@ -181,7 +180,7 @@ To rebuild it from a new source clip:
 
 ```bash
 ffmpeg -ss 2.0 -i sources/label-source.mp4 \
-  -filter_complex "[0:v]crop=720:720:280:0,scale=560:560,fps=24,split[a][b];\
+  -filter_complex "[0:v]crop=720:720:280:0,scale=560:560,fps=24,split[a][b];\\
 [b]reverse,trim=start_frame=1,setpts=PTS-STARTPTS[r];[a][r]concat=n=2:v=1:a=0[v]" \
   -map "[v]" -an -c:v libx264 -profile:v main -pix_fmt yuv420p \
   -crf 30 -preset slow -movflags +faststart web/label.mp4
@@ -252,7 +251,7 @@ crontab -e
 
 Paste fresh material into the signature-content section of `persona.md` each
 week. That section is what keeps drops grounded in something real instead of
-generically pleasant — it's the difference between a host and a voice.
+being generically pleasant — it's the difference between a host and a voice.
 
 ## Music rights
 
