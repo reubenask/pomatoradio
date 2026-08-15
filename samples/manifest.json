@@ -138,5 +138,61 @@
     "file": "one-drop-nostalgia.mp3",
     "duration": 240.0,
     "bpm": 129.3
+  },
+  {
+    "show": "saturdaysoul",
+    "title": "\u5e72\u676f",
+    "file": "ganbei.mp3",
+    "duration": 190.0,
+    "bpm": 122.0
+  },
+  {
+    "show": "saturdaysoul",
+    "title": "\u5206\u4e0d\u5f00",
+    "file": "fenbukai.mp3",
+    "duration": 278.2,
+    "bpm": 115.8
+  },
+  {
+    "show": "saturdaysoul",
+    "title": "No More Games",
+    "file": "no-more-games.mp3",
+    "duration": 188.3,
+    "bpm": 109.6
+  },
+  {
+    "show": "hiphop",
+    "title": "We Don't Lose",
+    "file": "we-don-t-lose.mp3",
+    "duration": 227.7,
+    "bpm": 145.5
+  },
+  {
+    "show": "hiphop",
+    "title": "Believe",
+    "file": "believe.mp3",
+    "duration": 146.0,
+    "bpm": 132.6
+  },
+  {
+    "show": "hiphop",
+    "title": "2 on 2",
+    "file": "2-on-2.mp3",
+    "duration": 194.7,
+    "bpm": 96.1
+  },
+  {
+    "show": "any",
+    "title": "So Naa",
+    "file": "so-naa.mp3",
+    "duration": 216.2,
+    "bpm": 105.4
+  },
+  {
+    "show": "trap",
+    "title": "Brandish",
+    "file": "brandish.mp3",
+    "duration": 231.3,
+    "bpm": 140.6
   }
 ]

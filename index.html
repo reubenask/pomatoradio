@@ -511,6 +511,9 @@
 <!-- Second deck, used only by the preview rotation's crossfade — the live
      stream is a single continuous feed and never needs one. -->
 <audio id="audioB" preload="none"></audio>
+<!-- Third deck: the host, riding over the music the same way drops ride
+     over the mix on the real station (station.liq's smooth_add). -->
+<audio id="dropDeck" preload="none"></audio>
 
 <script>
 /* Point this at a public Icecast mount to put the page anywhere. Left on
@@ -523,6 +526,7 @@ const MOUNT  = "radio.mp3";
 
 const audio = document.getElementById("audio");
 const audioB = document.getElementById("audioB");
+const dropDeck = document.getElementById("dropDeck");
 const decks = [audio, audioB];
 const stateEl = document.getElementById("state");
 const volEl = document.getElementById("vol");
@@ -534,11 +538,20 @@ let deckIdx = 0;                 // which deck[] is the audible "current" track
 let crossfading = false;
 let fadeT = 0;                   // 0..1 progress of an in-flight crossfade
 
+// Matches station.liq's smooth_add(p=0.35, ...) — the music bed drops to
+// this fraction of its volume while a voice drop rides over it, the same
+// ratio the real station ducks by.
+const DUCK = 0.35;
+let ducked = false;
+
 /* Volume applies to whichever deck the listener can actually hear right
    now — just the front deck normally, both of them mid-crossfade, each
-   scaled by how far into the fade it is. */
+   scaled by how far into the fade it is, and all of it pulled down to DUCK
+   while a drop is playing over the top. */
 function applyVolume() {
-  decks.forEach((d, i) => { d.volume = masterVol * (i === deckIdx ? 1 - fadeT : fadeT); });
+  const duckMul = ducked ? DUCK : 1;
+  decks.forEach((d, i) => { d.volume = masterVol * duckMul * (i === deckIdx ? 1 - fadeT : fadeT); });
+  dropDeck.volume = masterVol;
 }
 function setVol(v) {
   masterVol = v;
@@ -567,6 +580,13 @@ function stop() {
   preview = false;
   crossfading = false;
   decks.forEach((d, i) => { clearCrossfadeTimer(i); d.pause(); d.removeAttribute("src"); d.load(); });
+  clearTimeout(dropTimer);
+  dropTimer = null;
+  dropCycleIdx = 0;
+  ducked = false;
+  dropDeck.pause();
+  dropDeck.removeAttribute("src");
+  dropDeck.load();
   setPlaying(false);
 }
 function toggle() { document.body.classList.contains("playing") ? stop() : start(); }
@@ -648,6 +668,8 @@ async function startPreview() {
   preview = true;
   deckIdx = 0;
   playFirstPreviewTrack();
+  dropCycleIdx = 0;
+  scheduleDrop();
 }
 
 function updateNowPlaying(track) {
@@ -705,6 +727,57 @@ function armEndedBackstop(deck) {
 armEndedBackstop(audio);
 armEndedBackstop(audioB);
 
+/* --------------------------------------------------------------- drops
+   The real station picks a drop at random and ducks the music under it
+   (station.liq's smooth_add); this fallback does the same, on its own
+   timer since there's no Liquidsoap here to drive it. The interval isn't
+   fixed — it cycles 30/45/60 minutes and repeats, so it doesn't fall into
+   a metronome-like pattern a listener starts to anticipate. */
+const DROP_CYCLE_MIN = [30, 45, 60];
+let dropCycleIdx = 0;
+let dropTimer = null;
+let dropsManifest = null;
+let lastDropFile = null;
+
+async function loadDropsManifest() {
+  if (dropsManifest) return dropsManifest;
+  try { dropsManifest = await (await fetch("samples/drops-manifest.json?t=" + Date.now())).json(); }
+  catch { dropsManifest = []; }
+  return dropsManifest;
+}
+
+function scheduleDrop() {
+  clearTimeout(dropTimer);
+  const mins = DROP_CYCLE_MIN[dropCycleIdx % DROP_CYCLE_MIN.length];
+  dropCycleIdx++;
+  dropTimer = setTimeout(playDrop, mins * 60 * 1000);
+}
+
+async function playDrop() {
+  if (!preview) return;                  // stopped since this was scheduled
+  const list = await loadDropsManifest();
+  if (!list.length) { scheduleDrop(); return; }
+
+  let pick;
+  do { pick = list[Math.floor(Math.random() * list.length)]; }
+  while (list.length > 1 && pick.file === lastDropFile);
+  lastDropFile = pick.file;
+
+  ducked = true;
+  applyVolume();
+  dropDeck.src = "samples/" + pick.file;
+  dropDeck.currentTime = 0;
+  dropDeck.volume = masterVol;
+  dropDeck.load();
+  dropDeck.play().catch(() => { ducked = false; applyVolume(); scheduleDrop(); });
+}
+
+dropDeck.addEventListener("ended", () => {
+  ducked = false;
+  applyVolume();
+  scheduleDrop();
+});
+
 function playFirstPreviewTrack() {
   const track = previewQueue[0];
   const deck = decks[deckIdx];
@@ -713,7 +786,7 @@ function playFirstPreviewTrack() {
   deck.addEventListener("loadedmetadata", function begin() {
     deck.removeEventListener("loadedmetadata", begin);
     if (track.duration > 6) deck.currentTime = Math.random() * (track.duration - 4);
-    deck.volume = masterVol;
+    applyVolume();
     deck.play().then(() => {
       switchingTrack = false;
       setPlaying(true);
@@ -753,8 +826,7 @@ function beginCrossfade() {
   function step() {
     if (!crossfading) { clearInterval(timer); return; }   // stop() cut in mid-fade
     fadeT = Math.min(1, (performance.now() - start) / ms);
-    outDeck.volume = masterVol * (1 - fadeT);
-    inDeck.volume = masterVol * fadeT;
+    applyVolume();
     if (fadeT < 1) return;
     clearInterval(timer);
 
