@@ -99,6 +99,7 @@
     transition: background-color 2.5s ease, color 2.5s ease;
   }
 
+
   /* Warm light spilling in from the top-left, as in the mockup. */
   .glow {
     position: fixed; inset: -40% -20% auto -30%; height: 90%;
@@ -403,6 +404,21 @@
     .freq-pill .fm { display: none; }
   }
 
+  /* On a phone, main stretches to fill the screen and footer's
+     margin-top:auto pins the stats pill to the bottom edge — the right call
+     when the viewport is basically just the card. On a desktop monitor that
+     same stretch reads as broken: the card sits pinned to the top with a
+     dead gap opening up below it before the footer. Past phone width, stop
+     stretching and let the whole card center as one block instead. Placed
+     after the base main/footer rules on purpose — same specificity, so
+     source order decides, and a media query earlier in the sheet loses to
+     an unconditional rule that comes later. */
+  @media (min-width: 700px) {
+    body { justify-content: center; }
+    main { flex: none; }
+    footer { margin-top: 26px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .glow, .grain, .vinyl, .bars i, .label, .halo { animation: none; }
     .deck { transform: none; }
@@ -492,6 +508,9 @@
      sends no Access-Control-Allow-Origin, and playback dies with
      NotSupportedError. Plain media playback is exempt from CORS. -->
 <audio id="audio" preload="none"></audio>
+<!-- Second deck, used only by the preview rotation's crossfade — the live
+     stream is a single continuous feed and never needs one. -->
+<audio id="audioB" preload="none"></audio>
 
 <script>
 /* Point this at a public Icecast mount to put the page anywhere. Left on
@@ -503,14 +522,27 @@ const STREAM = "http://localhost:8000/radio.mp3";
 const MOUNT  = "radio.mp3";
 
 const audio = document.getElementById("audio");
+const audioB = document.getElementById("audioB");
+const decks = [audio, audioB];
 const stateEl = document.getElementById("state");
 const volEl = document.getElementById("vol");
 
 /* ------------------------------------------------------------- playback */
 let failed = false;
+let masterVol = 0.8;
+let deckIdx = 0;                 // which deck[] is the audible "current" track
+let crossfading = false;
+let fadeT = 0;                   // 0..1 progress of an in-flight crossfade
 
+/* Volume applies to whichever deck the listener can actually hear right
+   now — just the front deck normally, both of them mid-crossfade, each
+   scaled by how far into the fade it is. */
+function applyVolume() {
+  decks.forEach((d, i) => { d.volume = masterVol * (i === deckIdx ? 1 - fadeT : fadeT); });
+}
 function setVol(v) {
-  audio.volume = v;
+  masterVol = v;
+  applyVolume();
   volEl.value = v;
   volEl.style.setProperty("--pct", (v * 100) + "%");
   try { localStorage.setItem("pomato.volume", v); } catch {}
@@ -518,9 +550,9 @@ function setVol(v) {
 setVol(parseFloat(localStorage.getItem("pomato.volume") ?? "0.8"));
 volEl.addEventListener("input", () => setVol(+volEl.value));
 
-let lastVol = audio.volume;
+let lastVol = masterVol;
 document.getElementById("mute").addEventListener("click", () => {
-  if (audio.volume > 0) { lastVol = audio.volume; setVol(0); }
+  if (masterVol > 0) { lastVol = masterVol; setVol(0); }
   else setVol(lastVol || 0.8);
 });
 
@@ -533,9 +565,8 @@ function start() {
 }
 function stop() {
   preview = false;
-  audio.pause();
-  audio.removeAttribute("src");
-  audio.load();
+  crossfading = false;
+  decks.forEach((d, i) => { clearCrossfadeWatch(i); d.pause(); d.removeAttribute("src"); d.load(); });
   setPlaying(false);
 }
 function toggle() { document.body.classList.contains("playing") ? stop() : start(); }
@@ -544,11 +575,11 @@ document.getElementById("play").addEventListener("click", toggle);
 document.getElementById("discBtn").addEventListener("click", toggle);
 
 /* Live has "jump to live"; preview has nothing to resync to, so it just
-   moves on to a different track — same button, the nearest honest meaning
-   in each mode. */
+   crossfades on to a different track early — same button, the nearest
+   honest meaning in each mode. */
 document.getElementById("resync").addEventListener("click", () => {
   if (!document.body.classList.contains("playing")) return;
-  if (preview) nextPreviewTrack();
+  if (preview) beginCrossfade();
   else { stop(); start(); }
 });
 
@@ -556,14 +587,18 @@ document.getElementById("resync").addEventListener("click", () => {
    No live stream reaches this page on GitHub Pages, and the audience never
    sees a track picker to work around that — real radio doesn't have one.
    Press play and something is already going, the way turning on a radio
-   works: joined mid-track, one title at a time, next one picked when this
-   one ends. web/samples/manifest.json (written by
-   scripts/import_trial_music.py) is the pool; whichever show the schedule
-   says is on decides which slice of it plays. */
+   works: joined mid-track, one title at a time, the next one crossfaded in
+   before this one ends rather than cutting to silence. Tracks run in tempo
+   order — a beatless ambient piece never lands next to something at 140
+   bpm — instead of pure shuffle. web/samples/manifest.json (written by
+   scripts/import_trial_music.py, bpm added by aubio) is the pool; whichever
+   show the schedule says is on decides which slice of it plays. */
+const CROSSFADE = 5;           // seconds of overlap
 let preview = false;
 let liveShow = null;
 let previewManifest = null;
 let previewQueue = [];
+let previewShow = null;
 
 async function loadPreviewManifest() {
   if (previewManifest) return previewManifest;
@@ -572,13 +607,15 @@ async function loadPreviewManifest() {
   return previewManifest;
 }
 
-function shuffle(list) {
-  const out = list.slice();
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
+/* Ascending by bpm, entered at a random point and wrapped — so a return
+   visitor doesn't always hear the set open on the same track — rather than
+   shuffled outright. The one seam is the wrap from fastest back to slowest;
+   everywhere else, consecutive tracks are the closest tempo match available
+   in a pool this small. */
+function tempoOrder(pool) {
+  const sorted = pool.slice().sort((a, b) => (a.bpm || 0) - (b.bpm || 0));
+  const at = Math.floor(Math.random() * sorted.length);
+  return sorted.slice(at).concat(sorted.slice(0, at));
 }
 
 /* Which show picks the pool is read straight off currentShow() — the
@@ -587,12 +624,20 @@ function shuffle(list) {
    from an async fetch that may not have resolved yet if someone hits play
    fast. Every listener hears the show that fits their own local time, same
    as the header already promised. */
-let previewShow = null;
-
 function buildPreviewQueue(manifest) {
   previewShow = currentShow();
   const pool = manifest.filter(t => t.show === previewShow);
-  return shuffle(pool.length ? pool : manifest);
+  return tempoOrder(pool.length ? pool : manifest);
+}
+
+/* Re-checked on every track change, not just at the start — a session that
+   runs long enough to cross a show boundary drifts into the new show's pool
+   the same way the real station would. Returns the track that should play
+   next; previewQueue[0] is always "what's currently audible". */
+function pickNextTrack() {
+  if (currentShow() !== previewShow) previewQueue = buildPreviewQueue(previewManifest);
+  else previewQueue.push(previewQueue.shift());
+  return previewQueue[0];
 }
 
 async function startPreview() {
@@ -601,34 +646,11 @@ async function startPreview() {
 
   previewQueue = buildPreviewQueue(manifest);
   preview = true;
-  playPreviewTrack(true);
+  deckIdx = 0;
+  playFirstPreviewTrack();
 }
 
-function nextPreviewTrack() {
-  /* Re-checked on every track change, not just at the start — a session
-     that runs long enough to cross a show boundary should drift into the
-     new show's pool the same way the real station would. */
-  if (currentShow() !== previewShow) {
-    previewQueue = buildPreviewQueue(previewManifest);
-  } else {
-    previewQueue.push(previewQueue.shift());
-  }
-  playPreviewTrack(false);
-}
-
-function playPreviewTrack(joinMidway) {
-  const track = previewQueue[0];
-  switchingTrack = true;
-  audio.src = "samples/" + track.file;
-  const begin = () => {
-    if (joinMidway && track.duration > 6) {
-      audio.currentTime = Math.random() * (track.duration - 4);
-    }
-    audio.play().then(() => { switchingTrack = false; setPlaying(true); })
-      .catch(() => { switchingTrack = false; fail("Can't connect"); });
-  };
-  audio.addEventListener("loadedmetadata", begin, { once: true });
-  audio.load();
+function updateNowPlaying(track) {
   document.getElementById("now").textContent = track.title;
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
@@ -639,7 +661,89 @@ function playPreviewTrack(joinMidway) {
   }
 }
 
-audio.addEventListener("ended", () => { if (preview) nextPreviewTrack(); });
+/* Arms a one-shot watch on the front deck: once it's within CROSSFADE
+   seconds of its own end, start fading the next track in under it. A
+   timeupdate check rather than a setTimeout scheduled off the track's
+   duration, because currentTime is the actual playback position — robust
+   to whatever offset joinMidway started at.
+
+   watchHandlers tracks the live listener per deck index so a manual skip
+   (resync, mid-track) can clear the old one — decks are two long-lived
+   elements taking turns as "front", and without this a deck that's skipped
+   before its watch ever fires keeps that listener forever, stacking a fresh
+   one on top of it every time the deck comes back around. */
+const watchHandlers = [null, null];
+function clearCrossfadeWatch(idx) {
+  if (watchHandlers[idx]) decks[idx].removeEventListener("timeupdate", watchHandlers[idx]);
+  watchHandlers[idx] = null;
+}
+function armCrossfadeWatch(deck) {
+  const idx = decks.indexOf(deck);
+  clearCrossfadeWatch(idx);
+  function onTime() {
+    if (crossfading) return;
+    if (deck.duration && deck.currentTime >= deck.duration - CROSSFADE) {
+      clearCrossfadeWatch(idx);
+      beginCrossfade();
+    }
+  }
+  watchHandlers[idx] = onTime;
+  deck.addEventListener("timeupdate", onTime);
+}
+
+function playFirstPreviewTrack() {
+  const track = previewQueue[0];
+  const deck = decks[deckIdx];
+  switchingTrack = true;
+  deck.src = "samples/" + track.file;
+  deck.addEventListener("loadedmetadata", function begin() {
+    deck.removeEventListener("loadedmetadata", begin);
+    if (track.duration > 6) deck.currentTime = Math.random() * (track.duration - 4);
+    deck.volume = masterVol;
+    deck.play().then(() => {
+      switchingTrack = false;
+      setPlaying(true);
+      armCrossfadeWatch(deck);
+    }).catch(() => { switchingTrack = false; fail("Can't connect"); });
+  });
+  deck.load();
+  updateNowPlaying(track);
+}
+
+function beginCrossfade() {
+  if (!preview || crossfading || previewQueue.length < 2) return;
+  const outDeck = decks[deckIdx];
+  const inIdx = 1 - deckIdx;
+  const inDeck = decks[inIdx];
+  const track = pickNextTrack();
+
+  clearCrossfadeWatch(deckIdx);
+  crossfading = true;
+  fadeT = 0;
+  inDeck.src = "samples/" + track.file;
+  inDeck.currentTime = 0;
+  inDeck.volume = 0;
+  inDeck.load();
+  inDeck.play().catch(() => {});
+  updateNowPlaying(track);
+
+  const start = performance.now(), ms = CROSSFADE * 1000;
+  function step(now) {
+    if (!crossfading) return;                 // stop() cut in mid-fade
+    fadeT = Math.min(1, (now - start) / ms);
+    outDeck.volume = masterVol * (1 - fadeT);
+    inDeck.volume = masterVol * fadeT;
+    if (fadeT < 1) { requestAnimationFrame(step); return; }
+
+    deckIdx = inIdx;                           // flip before pausing outDeck,
+    crossfading = false; fadeT = 0;            // so its pause event is ignored
+    outDeck.pause();
+    outDeck.removeAttribute("src");
+    outDeck.load();
+    armCrossfadeWatch(inDeck);
+  }
+  requestAnimationFrame(step);
+}
 
 /* Someone who asked the OS for less motion gets the still, not a loop.
    Declared before setPlaying, which reads it — a const referenced from a
@@ -666,23 +770,28 @@ function setPlaying(on) {
 function fail(msg) {
   failed = true;
   preview = false;
+  crossfading = false;
   document.body.classList.remove("playing");
   document.body.classList.add("offline");
   stateEl.textContent = msg;
 }
 
 /* A rejected play() also fires `pause`; without the flag that handler wipes
-   the error message and the user is told nothing at all. Swapping to the
-   next preview track fires it too — audio.load() pauses before the new
-   source is ready — and that one has to be ignored the same way, or the
-   station reads as stopping between every single track. */
+   the error message and the user is told nothing at all. Loading a fresh
+   track fires it too — .load() pauses before the new source is ready.
+   Each deck only drives the shared state while it's the front deck
+   (decks[deckIdx]) — during a crossfade the outgoing deck gets paused
+   deliberately once deckIdx has already flipped past it, so that pause is
+   silently ignored rather than read as the station stopping. */
 let switchingTrack = false;
-audio.addEventListener("pause",   () => { if (!failed && !switchingTrack) setPlaying(false); });
-audio.addEventListener("playing", () => setPlaying(true));
-audio.addEventListener("error",   () => {
-  if (!audio.getAttribute("src")) return;
-  fail("Stream dropped");
-});
+function wireDeck(deck) {
+  const isFront = () => decks[deckIdx] === deck;
+  deck.addEventListener("pause",   () => { if (isFront() && !failed && !switchingTrack) setPlaying(false); });
+  deck.addEventListener("playing", () => { if (isFront()) setPlaying(true); });
+  deck.addEventListener("error",   () => { if (isFront() && deck.getAttribute("src")) fail("Stream dropped"); });
+}
+wireDeck(audio);
+wireDeck(audioB);
 
 /* ------------------------------------------------------------- the dial */
 (function ticks() {

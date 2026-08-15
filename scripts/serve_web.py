@@ -28,6 +28,7 @@ import datetime as dt
 import http.server
 import json
 import pathlib
+import re
 import time
 import urllib.error
 import urllib.request
@@ -171,7 +172,51 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         elif route == "/show.json":
             return self._send(json.dumps(schedule_now()).encode(), "application/json")
 
+        # SimpleHTTPRequestHandler has never supported Range requests — it
+        # always serves the whole file. Without a 206 response an <audio>
+        # element reports itself as unseekable (seekable = [0,0]) even once
+        # fully buffered, which silently breaks both the join-mid-track start
+        # and the crossfade, since both work by setting currentTime. GitHub
+        # Pages' CDN honours Range natively; this stands in for that locally.
+        if self.headers.get("Range"):
+            served = self._serve_range()
+            if served:
+                return
         return super().do_GET()
+
+    def _serve_range(self) -> bool:
+        fpath = pathlib.Path(self.translate_path(self.path))
+        if not fpath.is_file():
+            return False
+
+        m = re.match(r"bytes=(\d*)-(\d*)", self.headers["Range"])
+        size = fpath.stat().st_size
+        if not m or not (m.group(1) or m.group(2)):
+            return False
+
+        if m.group(1):
+            start = int(m.group(1))
+            end = int(m.group(2)) if m.group(2) else size - 1
+        else:                                    # "bytes=-500" = last 500 bytes
+            start = max(0, size - int(m.group(2)))
+            end = size - 1
+        end = min(end, size - 1)
+
+        if start >= size or start > end:
+            self.send_response(416)
+            self.send_header("Content-Range", f"bytes */{size}")
+            self.end_headers()
+            return True
+
+        self.send_response(206)
+        self.send_header("Content-Type", self.guess_type(str(fpath)))
+        self.send_header("Content-Length", str(end - start + 1))
+        self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+        self.end_headers()
+        with open(fpath, "rb") as f:
+            f.seek(start)
+            self.wfile.write(f.read(end - start + 1))
+        return True
 
     def _proxy_status(self):
         try:
@@ -200,6 +245,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # place (label.png especially) leaves the browser showing the old file
         # with no obvious reason why, and you go looking for a bug in the CSS.
         self.send_header("Cache-Control", "no-store, must-revalidate")
+        # Advertised on every response, not just 206s — a browser that never
+        # sees this on the plain 200 assumes Range isn't supported at all and
+        # won't bother trying, which is exactly the failure mode this exists
+        # to fix.
+        self.send_header("Accept-Ranges", "bytes")
         super().end_headers()
 
     def log_message(self, fmt, *args):
