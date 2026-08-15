@@ -83,8 +83,22 @@
   :root { --gold: #c9a24a; --gold-hi: #e8cf8e; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
+  html { height: 100%; }
 
+  /* One rule, every size: the card centers as a block, both axes, with the
+     viewport's slack split evenly above and below it. Phone, tablet, laptop,
+     an actual 24" monitor — same alignment throughout, nothing that swaps
+     behavior at a breakpoint.
+
+     min-height, not height — body needs to be free to grow past 100dvh when
+     the card itself is taller than the viewport (any laptop under about
+     820px tall, 1366×768 included). height:100% on body was fighting that:
+     it fixed the box at exactly the viewport height, so a taller centered
+     card overflowed both above and below it — and the overflow above y=0
+     has no scroll position that reaches it, permanently clipping the header
+     with no way back to it. min-height alone still guarantees full-viewport
+     background coverage on short content; it just also lets the box grow
+     when it needs to, which is the part height:100% was preventing. */
   body {
     background: var(--bg);
     color: var(--ink);
@@ -93,6 +107,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 18px 20px 26px;
     position: relative;
     overflow-x: hidden;
@@ -118,7 +133,7 @@
     66%{transform:translate(2%,-3%)} 100%{transform:translate(0,0)}
   }
 
-  main { position: relative; width: min(100%, 430px); flex: 1; display: flex; flex-direction: column; }
+  main { position: relative; width: min(100%, 430px); display: flex; flex-direction: column; }
 
   /* ------------------------------------------------------------- header */
   header { display: flex; align-items: center; gap: 12px; }
@@ -337,7 +352,7 @@
   }
 
   /* ------------------------------------------------------------- footer */
-  footer { margin-top: auto; padding-top: 22px; display: flex; justify-content: center; }
+  footer { margin-top: 26px; padding-top: 22px; display: flex; justify-content: center; }
   .stats {
     display: flex; align-items: center; gap: 0;
     border: 1px solid var(--line); border-radius: 999px;
@@ -402,21 +417,6 @@
     .tagline { display: none; }
     .wordmark-sm { font-size: 11px; letter-spacing: .1em; }
     .freq-pill .fm { display: none; }
-  }
-
-  /* On a phone, main stretches to fill the screen and footer's
-     margin-top:auto pins the stats pill to the bottom edge — the right call
-     when the viewport is basically just the card. On a desktop monitor that
-     same stretch reads as broken: the card sits pinned to the top with a
-     dead gap opening up below it before the footer. Past phone width, stop
-     stretching and let the whole card center as one block instead. Placed
-     after the base main/footer rules on purpose — same specificity, so
-     source order decides, and a media query earlier in the sheet loses to
-     an unconditional rule that comes later. */
-  @media (min-width: 700px) {
-    body { justify-content: center; }
-    main { flex: none; }
-    footer { margin-top: 26px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
