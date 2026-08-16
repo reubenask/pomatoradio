@@ -579,5 +579,131 @@
     "file": "dawn-in-velvet.mp3",
     "duration": 214.0,
     "bpm": 115.6
+  },
+  {
+    "show": "country",
+    "title": "Dust Bowl Dance",
+    "file": "dust-bowl-dance.mp3",
+    "duration": 184.3,
+    "bpm": 120.0
+  },
+  {
+    "show": "country",
+    "title": "Dust Bowl Reel",
+    "file": "dust-bowl-reel.mp3",
+    "duration": 194.8,
+    "bpm": 120.5
+  },
+  {
+    "show": "country",
+    "title": "Dust Bowl Dance Party",
+    "file": "dust-bowl-dance-party.mp3",
+    "duration": 171.5,
+    "bpm": 120.9
+  },
+  {
+    "show": "country",
+    "title": "Barnyard Dust Party",
+    "file": "barnyard-dust-party.mp3",
+    "duration": 178.3,
+    "bpm": 119.8
+  },
+  {
+    "show": "country",
+    "title": "Dust and Diamonds",
+    "file": "dust-and-diamonds.mp3",
+    "duration": 188.7,
+    "bpm": 114.4
+  },
+  {
+    "show": "country",
+    "title": "Diamonds in the Dust Road",
+    "file": "diamonds-in-the-dust-road.mp3",
+    "duration": 164.3,
+    "bpm": 113.8
+  },
+  {
+    "show": "country",
+    "title": "Rhinestone Dust",
+    "file": "rhinestone-dust.mp3",
+    "duration": 165.9,
+    "bpm": 133.7
+  },
+  {
+    "show": "country",
+    "title": "Diamond Dust Waltz",
+    "file": "diamond-dust-waltz.mp3",
+    "duration": 179.2,
+    "bpm": 126.4
+  },
+  {
+    "show": "country",
+    "title": "Dust on the Highway",
+    "file": "dust-on-the-highway.mp3",
+    "duration": 193.2,
+    "bpm": 125.7
+  },
+  {
+    "show": "country",
+    "title": "Highway Dust Trail",
+    "file": "highway-dust-trail.mp3",
+    "duration": 190.1,
+    "bpm": 126.3
+  },
+  {
+    "show": "country",
+    "title": "Backroad Dust Cloud",
+    "file": "backroad-dust-cloud.mp3",
+    "duration": 272.3,
+    "bpm": 101.0
+  },
+  {
+    "show": "country",
+    "title": "Dust and Gravel Road",
+    "file": "dust-and-gravel-road.mp3",
+    "duration": 170.7,
+    "bpm": 103.7
+  },
+  {
+    "show": "country",
+    "title": "Long Dusty Mile",
+    "file": "long-dusty-mile.mp3",
+    "duration": 210.0,
+    "bpm": 103.3
+  },
+  {
+    "show": "country",
+    "title": "Windshield Dust",
+    "file": "windshield-dust.mp3",
+    "duration": 243.7,
+    "bpm": 104.9
+  },
+  {
+    "show": "country",
+    "title": "Tailwind Dust",
+    "file": "tailwind-dust.mp3",
+    "duration": 193.2,
+    "bpm": 111.9
+  },
+  {
+    "show": "country",
+    "title": "Dust Behind the Wheels",
+    "file": "dust-behind-the-wheels.mp3",
+    "duration": 164.0,
+    "bpm": 112.2
+  },
+  {
+    "show": "country",
+    "title": "Dust on the Porch",
+    "file": "dust-on-the-porch.mp3",
+    "duration": 183.3,
+    "bpm": 103.4
+  },
+  {
+    "show": "country",
+    "title": "Porch Step Dust",
+    "file": "porch-step-dust.mp3",
+    "duration": 205.0,
+    "bpm": 101.8
   }
 ]

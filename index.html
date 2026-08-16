@@ -58,7 +58,9 @@
     return "smallhours";
   }
 
-  document.documentElement.dataset.band = SHOWS[currentShow()].palette;
+  var earlyManualShow = null;
+  try { earlyManualShow = localStorage.getItem("pomato.manualShow") || null; } catch (e) {}
+  document.documentElement.dataset.band = SHOWS[earlyManualShow || currentShow()].palette;
 </script>
 <style>
   :root,
@@ -300,6 +302,15 @@
     opacity: .65; min-height: 12px;
   }
 
+  .pick-pill {
+    margin: 8px auto 0; display: block; padding: 6px 14px;
+    border-radius: 999px; border: 1px solid var(--accent);
+    background: rgba(255,255,255,.03); color: var(--accent);
+    font: inherit; font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase;
+    cursor: pointer; transition: background .2s ease;
+  }
+  .pick-pill:hover { background: rgba(255,255,255,.08); }
+
   /* ---------------------------------------------------------- transport */
   .transport {
     margin-top: 22px; display: flex; align-items: center;
@@ -387,11 +398,33 @@
     margin-bottom: 3px;
   }
   .sheet p.sub { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 16px; }
+
+  .auto-row {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; margin-bottom: 4px; border-radius: 8px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.02);
+    color: var(--ink); font: inherit; font-size: 12.5px; cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .auto-row:hover { border-color: var(--accent); }
+  .auto-row .check { font-style: normal; color: var(--accent); opacity: 0; }
+  .auto-row.active .check { opacity: 1; }
+  .pick-hint {
+    font-size: 10.5px; color: var(--ink-dim); opacity: .75;
+    margin-bottom: 14px; line-height: 1.4;
+  }
+
   .sheet h3 {
     font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase;
     color: var(--ink-dim); margin: 16px 0 8px;
   }
-  .slot { display: flex; gap: 12px; padding: 6px 0; font-size: 12.5px; border-bottom: 1px solid var(--line); }
+  .slot {
+    display: flex; gap: 12px; padding: 6px 4px; font-size: 12.5px;
+    border-bottom: 1px solid var(--line); border-radius: 6px;
+    width: 100%; background: none; color: inherit; font-family: inherit;
+    text-align: left; cursor: pointer; transition: background .15s ease;
+  }
+  .slot:hover { background: rgba(255,255,255,.04); }
   .slot:last-child { border-bottom: 0; }
   /* Wide enough for the longest weekend label ("Sat 22:00 – Sun 06:00") on one
      line — wrapping the times makes the column unreadable. */
@@ -466,6 +499,7 @@
   <p class="track" id="now">&nbsp;</p>
   <p class="show-line" id="show"></p>
   <p class="upnext" id="upnext"></p>
+  <button class="pick-pill" id="pickPill" hidden>your pick · tap for auto</button>
 
   <div class="transport">
     <button class="icon-btn" id="mute" aria-label="Mute">
@@ -503,6 +537,10 @@
   <div class="sheet-inner">
     <h2>Schedule</h2>
     <p class="sub">station time <span id="stationTime">—</span></p>
+    <button class="auto-row" id="autoToggle">
+      <span>Auto — follow the schedule</span><i class="check">✓</i>
+    </button>
+    <p class="pick-hint">or tap a show below to listen to that instead, any time</p>
     <div id="sched"></div>
   </div>
 </div>
@@ -652,24 +690,27 @@ function tempoOrder(pool) {
    thin or empty and fall back to the full catalog either way. */
 const PARTITION_BY_SHOW = true;
 
-/* Which show picks the pool is read straight off currentShow() — the
-   visitor's own clock, same function the header uses to guess the palette
-   before anything has loaded — rather than waiting on liveShow, which comes
-   from an async fetch that may not have resolved yet if someone hits play
-   fast. Every listener hears the show that fits their own local time, same
-   as the header already promised. */
+/* Which show picks the pool is read off effectiveShow() — currentShow()
+   (the visitor's own clock, same function the header uses to guess the
+   palette before anything has loaded) unless they've picked a show of
+   their own, in which case that wins — rather than waiting on liveShow,
+   which comes from an async fetch that may not have resolved yet if
+   someone hits play fast. Every listener hears the show that fits their
+   own local time, or their own choice, same as the header already
+   promised. */
 function buildPreviewQueue(manifest) {
-  previewShow = currentShow();
+  previewShow = effectiveShow();
   const pool = PARTITION_BY_SHOW ? manifest.filter(t => t.show === previewShow) : manifest;
   return tempoOrder(pool.length ? pool : manifest);
 }
 
 /* Re-checked on every track change, not just at the start — a session that
    runs long enough to cross a show boundary drifts into the new show's pool
-   the same way the real station would. Returns the track that should play
-   next; previewQueue[0] is always "what's currently audible". */
+   the same way the real station would (unless a manual pick is active, in
+   which case there's nothing to drift to). Returns the track that should
+   play next; previewQueue[0] is always "what's currently audible". */
 function pickNextTrack() {
-  if (currentShow() !== previewShow) previewQueue = buildPreviewQueue(previewManifest);
+  if (effectiveShow() !== previewShow) previewQueue = buildPreviewQueue(previewManifest);
   else previewQueue.push(previewQueue.shift());
   return previewQueue[0];
 }
@@ -930,27 +971,64 @@ wireDeck(audioB);
 
 /* ------------------------------------------------------------- schedule */
 const WEEKDAY = [
-  ["06:00 – 10:00", "first light"], ["10:00 – 12:00", "slow roll"],
-  ["12:00 – 14:00", "midday"], ["14:00 – 17:00", "long afternoon"],
-  ["17:00 – 20:00", "slow drive"], ["20:00 – 23:00", "night garage"],
-  ["23:00 – 06:00", "small hours"],
+  ["firstlight", "06:00 – 10:00", "first light"], ["slowroll", "10:00 – 12:00", "slow roll"],
+  ["midday", "12:00 – 14:00", "midday"], ["longafternoon", "14:00 – 17:00", "long afternoon"],
+  ["slowdrive", "17:00 – 20:00", "slow drive"], ["nightgarage", "20:00 – 23:00", "night garage"],
+  ["smallhours", "23:00 – 06:00", "small hours"],
 ];
 const WEEKEND = [
-  ["Fri 17:00 – Sat 06:00", "afro friday"], ["Sat 06:00 – 12:00", "saturday soul"],
-  ["Sat 12:00 – 18:00", "hip hop hours"], ["Sat 18:00 – 22:00", "trap"],
-  ["Sat 22:00 – Sun 06:00", "house hours"], ["Sun 06:00 – 14:00", "sunday folk"],
-  ["Sun 14:00 – 22:00", "country"], ["Sun 22:00 – Mon 06:00", "sunday night"],
+  ["afrofriday", "Fri 17:00 – Sat 06:00", "afro friday"], ["saturdaysoul", "Sat 06:00 – 12:00", "saturday soul"],
+  ["hiphop", "Sat 12:00 – 18:00", "hip hop hours"], ["trap", "Sat 18:00 – 22:00", "trap"],
+  ["househours", "Sat 22:00 – Sun 06:00", "house hours"], ["sundayfolk", "Sun 06:00 – 14:00", "sunday folk"],
+  ["country", "Sun 14:00 – 22:00", "country"], ["sundaynight", "Sun 22:00 – Mon 06:00", "sunday night"],
 ];
 
-function renderSchedule(liveLabel) {
+function renderSchedule(activeKey, isPick) {
   const rows = (title, list) =>
-    `<h3>${title}</h3>` + list.map(([when, name]) =>
-      `<div class="slot${name === liveLabel ? " now" : ""}">` +
-      `<time>${when}</time><span>${name}</span></div>`).join("");
+    `<h3>${title}</h3>` + list.map(([key, when, name]) =>
+      `<button class="slot${key === activeKey ? " now" : ""}" data-show="${key}">` +
+      `<time>${when}</time><span>${name}</span></button>`).join("");
   document.getElementById("sched").innerHTML =
     rows("Monday – Friday daytime", WEEKDAY) +
     rows("Friday evening – Sunday", WEEKEND);
+  document.getElementById("autoToggle").classList.toggle("active", !isPick);
 }
+
+/* --------------------------------------------------------- listen-your-way
+   Every listener otherwise hears whatever the clock says — that's the whole
+   point of a schedule. This lets one person tune to a specific show instead,
+   without touching what anyone else hears: it only ever changes the local
+   fallback rotation this browser is drawing from, never the shared stream
+   (which has no concept of "just for me" — it's one broadcast). Persisted
+   in localStorage so the choice survives a reload, same as volume. */
+let manualShow = null;
+try { manualShow = localStorage.getItem("pomato.manualShow") || null; } catch {}
+
+function effectiveShow(when) {
+  return manualShow || currentShow(when);
+}
+
+function chooseShow(key) {
+  manualShow = key === "auto" ? null : key;
+  try {
+    if (manualShow) localStorage.setItem("pomato.manualShow", manualShow);
+    else localStorage.removeItem("pomato.manualShow");
+  } catch {}
+  sheet.classList.remove("open");
+  showNow();
+  // Jump to the new pick right away rather than waiting for the track
+  // already playing to end on its own schedule.
+  if (preview && document.body.classList.contains("playing") && !crossfading) {
+    beginCrossfade();
+  }
+}
+
+document.getElementById("sched").addEventListener("click", e => {
+  const row = e.target.closest(".slot");
+  if (row) chooseShow(row.dataset.show);
+});
+document.getElementById("autoToggle").addEventListener("click", () => chooseShow("auto"));
+document.getElementById("pickPill").addEventListener("click", () => chooseShow("auto"));
 
 const sheet = document.getElementById("sheet");
 document.getElementById("menu").addEventListener("click", () => sheet.classList.add("open"));
@@ -1025,18 +1103,40 @@ async function showNow() {
   catch { s = localShow(); }
 
   liveShow = s.show;
+
+  // A manual pick overrides what's shown/played only while there's actually
+  // a choice to honor: off air, or in the local fallback rotation, where
+  // this page decides what plays. A genuine live connection is one shared
+  // broadcast with no per-listener concept at all — showing a pick that
+  // can't actually take effect there would just be lying about what's
+  // audible, so it's ignored in that one case. station_time is never
+  // touched either way — that's clock information, true regardless of what
+  // the visitor chose to listen to. Art/clip fall back to the generic label
+  // rather than guessing whether a per-show asset exists for a show the
+  // server was never asked about.
+  const liveConnected = document.body.classList.contains("playing") && !preview;
+  if (manualShow && !liveConnected) {
+    s = { ...s, show: manualShow, label: SHOWS[manualShow].label,
+          palette: SHOWS[manualShow].palette, art: "label.png", clip: "label.mp4",
+          next: { show: null, label: null, at: null } };
+  }
+
   document.documentElement.dataset.band = s.palette;
   document.getElementById("show").textContent = s.label;
   dressDisc(s.show, s.art, s.clip);
   document.getElementById("stationTime").textContent = s.station_time;
 
+  const applied = manualShow && !liveConnected;
+  const pickPill = document.getElementById("pickPill");
+  pickPill.hidden = !applied;
+
   const mine = -new Date().getTimezoneOffset();
   const elsewhere = Math.abs(mine - s.station_offset_minutes) > 1;
-  const next = s.next.at ? `next: ${s.next.label} at ${s.next.at}` : "";
+  const next = applied ? "" : (s.next.at ? `next: ${s.next.label} at ${s.next.at}` : "");
   document.getElementById("upnext").textContent =
-    elsewhere ? `${next} · station time ${s.station_time}` : next;
+    !applied && elsewhere ? `${next} · station time ${s.station_time}` : next;
 
-  renderSchedule(s.label);
+  renderSchedule(s.show, applied);
 }
 
 /* ------------------------------------------------------------- the disc
