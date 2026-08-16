@@ -12,7 +12,7 @@ interrupting it.
 start.sh              brings up icecast + station + player in one command
 station.liq           the station: playlists, dayparts, ducking, live mic
 persona.md            who the host is — the whole personality lives here
-schedule.json         the seven shows: names, hours, and what each sounds like
+schedule.json         the shows: names, hours, and what each sounds like
 
 scripts/
   clean_voice.sh      raw recording → broadcast-ready drop
@@ -49,9 +49,9 @@ when it airs.
 | `nightgarage/` | 20:00 – 23:00 | deeper, groove-led, house and garage |
 | `smallhours/` | 23:00 – 06:00 | sparse, ambient, almost no percussion |
 
-**Friday 17:00 through Sunday 22:00** — the weekend runs by genre, not by mood.
+**Friday 17:00 through Monday 06:00** — the weekend runs by genre, not by mood.
 Each day belongs to a sound, and the nights carry past midnight: Friday night
-*is* Saturday 1am.
+*is* Saturday 1am, and Sunday night is Monday 1am.
 
 | show | on air | sounds like |
 |---|---|---|
@@ -62,8 +62,7 @@ Each day belongs to a sound, and the nights carry past midnight: Friday night
 | `househours/` | Sat 22:00 – Sun 06:00 | house, peak of the weekend |
 | `sundayfolk/` | Sun 06:00 – 14:00 | folk and acoustic, gentle |
 | `country/` | Sun 14:00 – 22:00 | country and americana |
-
-Sunday from 22:00 falls back to weekday `smallhours`, easing toward Monday.
+| `sundaynight/` | Sun 22:00 – Mon 06:00 | r&b, closing the weekend out |
 
 `music/any/` is the catch-all for tracks that suit any hour — with a small
 library, put everything there and fill the shows in over time.

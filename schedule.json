@@ -1,6 +1,6 @@
 {
   "station_name": "Pomato Radio 130.3",
-  "note": "Show names match music/<show>/ and drops/today/<show>/. Weekdays run by time of day; the weekend runs by genre, Friday 17:00 through Sunday 22:00. Nights carry past midnight \u2014 Friday night is Saturday 1am.",
+  "note": "Show names match music/<show>/ and drops/today/<show>/. Weekdays run by time of day; the weekend runs by genre, Friday 17:00 through Monday 06:00. Nights carry past midnight \u2014 Friday night is Saturday 1am, Sunday night is Monday 1am.",
   "weekday": {
     "firstlight": {
       "hours": "06:00-10:00",
@@ -59,6 +59,10 @@
     "country": {
       "when": "Sun 14:00 - 22:00",
       "vibe": "Country and americana. Sunday afternoon, windows open."
+    },
+    "sundaynight": {
+      "when": "Sun 22:00 - Mon 06:00",
+      "vibe": "R&B, closing the weekend out. Slower, closer, easing toward Monday."
     }
   },
   "any": {

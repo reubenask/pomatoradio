@@ -81,7 +81,7 @@ def weekday_shows(~track_sensitive = true, mk) =
 end
 
 # The weekend isn't a mood, it's a genre schedule — each day belongs to a sound.
-# 5w is Friday, 6w Saturday, 7w Sunday.
+# 5w is Friday, 6w Saturday, 7w Sunday, 1w Monday.
 #
 #   Fri 17:00 - Sat 06:00   afrofriday     afrobeats, all night
 #   Sat 06:00 - 12:00       saturdaysoul   r&b and soul, easy start
@@ -90,14 +90,16 @@ end
 #   Sat 22:00 - Sun 06:00   househours     house, peak of the weekend
 #   Sun 06:00 - 14:00       sundayfolk     folk and acoustic, gentle
 #   Sun 14:00 - 22:00       country        country and americana
-#   Sun 22:00 onward        (weekday)      smallhours, easing back toward Monday
+#   Sun 22:00 - Mon 06:00   sundaynight    r&b, closing the weekend out
 #
 # The nights deliberately run past midnight into the next date: Friday night
-# *is* Saturday 1am. The schedule agrees with how people live, not with the
-# calendar.
+# *is* Saturday 1am, and Sunday night is Monday 1am — same reason
+# sundaynight needs both a 7w and a 1w case below, same shape as afrofriday.
+# The schedule agrees with how people live, not with the calendar.
 def by_show(~track_sensitive = true, mk) =
   afro = mk("afrofriday")
   house = mk("househours")
+  sundaynight = mk("sundaynight")
   switch(
     track_sensitive = track_sensitive,
     [
@@ -110,6 +112,8 @@ def by_show(~track_sensitive = true, mk) =
       ({ 7w and 0h-6h }, house),
       ({ 7w and 6h-14h }, mk("sundayfolk")),
       ({ 7w and 14h-22h }, mk("country")),
+      ({ 7w and 22h-24h }, sundaynight),
+      ({ 1w and 0h-6h }, sundaynight),
       ({ true }, weekday_shows(track_sensitive = track_sensitive, mk))
     ]
   )

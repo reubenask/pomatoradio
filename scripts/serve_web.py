@@ -61,6 +61,7 @@ SHOWS = {
     "househours":    ("house hours",    "night"),
     "sundayfolk":    ("sunday folk",    "morning"),
     "country":       ("country",        "afternoon"),
+    "sundaynight":   ("sunday night",   "night"),
 }
 
 
@@ -87,6 +88,9 @@ def show_at(when: dt.datetime) -> str:
             return "sundayfolk"
         if h < 22:
             return "country"
+        return "sundaynight"
+    if w == 1 and h < 6:
+        return "sundaynight"       # Sunday night runs past midnight
 
     if h < 6:
         return "smallhours"
