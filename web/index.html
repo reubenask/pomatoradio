@@ -138,7 +138,13 @@
     66%{transform:translate(2%,-3%)} 100%{transform:translate(0,0)}
   }
 
-  main { position: relative; width: min(100%, 430px); display: flex; flex-direction: column; }
+  /* header, .tabbar and main are now three sibling flex children of body
+     (the tab bar sits between the header and whichever panel is active,
+     rather than everything nesting inside one <main>) — each needs the
+     same width cap independently so they still read as one aligned column
+     instead of each finding its own natural width. */
+  header, .tabbar, main { width: min(100%, 430px); }
+  main { position: relative; display: flex; flex-direction: column; }
 
   /* ------------------------------------------------------------- header */
   header { display: flex; align-items: center; gap: 12px; }
@@ -382,22 +388,36 @@
   .stats svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 
   /* ------------------------------------------------------------ schedule */
-  .sheet {
-    position: fixed; inset: 0; z-index: 10;
-    background: rgba(0,0,0,.72); backdrop-filter: blur(4px);
-    display: none; align-items: flex-start; justify-content: center;
-    padding: 60px 20px 20px; overflow-y: auto;
+  /* --------------------------------------------------------------- tabs
+     Three sibling views (Live / Weekday / Weekend) instead of a player
+     page with a schedule modal bolted on. .panel just toggles [hidden];
+     no position:fixed overlay, no backdrop, no open/close animation to
+     manage — a plain content swap. */
+  .tabbar {
+    display: flex; gap: 6px; margin: 14px 0 4px;
+    border-bottom: 1px solid var(--line);
   }
-  .sheet.open { display: flex; }
-  .sheet-inner {
-    width: min(100%, 430px); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 14px; padding: 20px;
+  .tab {
+    flex: 1; padding: 10px 4px 12px; background: none; border: none;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    color: var(--ink-dim); font: inherit; font-size: 11px; letter-spacing: .06em;
+    cursor: pointer; transition: color .2s ease, border-color .2s ease;
   }
-  .sheet h2 {
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .panel { width: 100%; }
+  /* :not([hidden]) rather than a bare selector — an ID selector's
+     display:flex otherwise outranks the browser's default [hidden]{display:
+     none} rule, so the hidden attribute would stop actually hiding
+     anything and every panel would show at once. */
+  #panel-live:not([hidden]) { display: flex; flex-direction: column; flex: 1; }
+  #panel-weekday, #panel-weekend { padding-top: 18px; }
+  .panel h2 {
     font-family: Georgia, serif; font-size: 19px; font-weight: 400;
     margin-bottom: 3px;
   }
-  .sheet p.sub { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 16px; }
+  .panel p.sub { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 16px; }
 
   .auto-row {
     width: 100%; display: flex; align-items: center; justify-content: space-between;
@@ -445,7 +465,6 @@
     .freq-pill svg { width: 12px; height: 12px; }
     .transport { gap: 16px; }
     .slot time { width: 122px; font-size: 9.5px; }
-    .sheet { padding: 40px 14px 14px; }
   }
 
   /* Very narrow. Drop the tagline rather than let it wrap under the wordmark. */
@@ -465,85 +484,112 @@
 <div class="glow"></div>
 <div class="grain"></div>
 
+<header>
+  <!-- Invisible twin of the freq-pill on the right, so the brand centers
+       in the remaining space symmetrically. It used to balance against the
+       menu button that's gone now the tabs replaced it — an exact clone
+       (rather than a guessed spacer width) keeps it correct at every
+       breakpoint the pill itself reflows at. -->
+  <div class="freq-pill" aria-hidden="true" style="visibility:hidden">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><path d="M7.5 7.5a6.4 6.4 0 000 9M16.5 16.5a6.4 6.4 0 000-9"/></svg>
+    130.3<span class="fm">&nbsp;FM</span>
+  </div>
+  <div class="brand">
+    <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="wordmark-sm">Pomato <em>Radio</em></div>
+    <div class="tagline">tune in · feel good</div>
+  </div>
+  <div class="freq-pill">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><path d="M7.5 7.5a6.4 6.4 0 000 9M16.5 16.5a6.4 6.4 0 000-9"/></svg>
+    130.3<span class="fm">&nbsp;FM</span>
+  </div>
+</header>
+
+<!-- Three separate views instead of one page carrying the player, the
+     weekday dayparts and the weekend genres all at once — that was the
+     "too much information" complaint. Each tab is its own focused screen;
+     picking a show in either schedule tab jumps back to Live so the choice
+     is immediately visible and audible, not just recorded somewhere. -->
+<nav class="tabbar" id="tabbar">
+  <button class="tab active" data-panel="live">Live Radio</button>
+  <button class="tab" data-panel="weekday">Weekday Music</button>
+  <button class="tab" data-panel="weekend">Weekend Vibes</button>
+</nav>
+
 <main>
-  <header>
-    <button class="icon-btn" id="menu" aria-label="Show the schedule">
-      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
-    <div class="brand">
-      <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="wordmark-sm">Pomato <em>Radio</em></div>
-      <div class="tagline">tune in · feel good</div>
+  <section class="panel" id="panel-live">
+    <div class="deck" id="deck">
+      <div class="halo"></div>
+      <div class="vinyl"></div>
+      <div class="label" id="label" role="img" aria-label="Pomato Radio mascots">
+        <video class="label-vid" id="labelVid" muted loop playsinline
+               preload="auto" poster="label.png" aria-hidden="true">
+          <source src="label.mp4" type="video/mp4">
+        </video>
+      </div>
+      <button class="play-hit" id="discBtn" aria-label="Play the stream"></button>
     </div>
-    <div class="freq-pill">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><path d="M7.5 7.5a6.4 6.4 0 000 9M16.5 16.5a6.4 6.4 0 000-9"/></svg>
-      130.3<span class="fm">&nbsp;FM</span>
+
+    <p class="onair"><i></i><span id="state">Off air</span></p>
+
+    <h1 class="wordmark">Pomato <em>Radio</em></h1>
+    <p class="track" id="now">&nbsp;</p>
+    <p class="show-line" id="show"></p>
+    <p class="upnext" id="upnext"></p>
+    <button class="pick-pill" id="pickPill" hidden>your pick · tap for auto</button>
+
+    <div class="transport">
+      <button class="icon-btn" id="mute" aria-label="Mute">
+        <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="play-btn" id="play" aria-label="Play the stream">
+        <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <button class="icon-btn" id="resync" aria-label="Jump to live">
+        <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v4h-4"/></svg>
+      </button>
     </div>
-  </header>
 
-  <div class="deck" id="deck">
-    <div class="halo"></div>
-    <div class="vinyl"></div>
-    <div class="label" id="label" role="img" aria-label="Pomato Radio mascots">
-      <video class="label-vid" id="labelVid" muted loop playsinline
-             preload="auto" poster="label.png" aria-hidden="true">
-        <source src="label.mp4" type="video/mp4">
-      </video>
+    <div class="vol">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+      <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
     </div>
-    <button class="play-hit" id="discBtn" aria-label="Play the stream"></button>
-  </div>
 
-  <p class="onair"><i></i><span id="state">Off air</span></p>
-
-  <h1 class="wordmark">Pomato <em>Radio</em></h1>
-  <p class="track" id="now">&nbsp;</p>
-  <p class="show-line" id="show"></p>
-  <p class="upnext" id="upnext"></p>
-  <button class="pick-pill" id="pickPill" hidden>your pick · tap for auto</button>
-
-  <div class="transport">
-    <button class="icon-btn" id="mute" aria-label="Mute">
-      <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/></svg>
-    </button>
-    <button class="play-btn" id="play" aria-label="Play the stream">
-      <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-    </button>
-    <button class="icon-btn" id="resync" aria-label="Jump to live">
-      <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v4h-4"/></svg>
-    </button>
-  </div>
-
-  <div class="vol">
-    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
-    <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
-  </div>
-
-  <div class="dial" aria-hidden="true">
-    <div class="ticks" id="ticks"></div>
-    <div class="scale"><span>128</span><span>129</span><span>130</span><span>131</span><span>132</span></div>
-    <div class="needle">130.3</div>
-  </div>
-
-  <footer>
-    <div class="stats">
-      <span><svg viewBox="0 0 24 24"><path d="M4 14v-4M8 17V7M12 20V4M16 17V7M20 14v-4"/></svg>128 kbps</span>
-      <span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0113 0"/></svg><b id="listeners">—</b></span>
+    <div class="dial" aria-hidden="true">
+      <div class="ticks" id="ticks"></div>
+      <div class="scale"><span>128</span><span>129</span><span>130</span><span>131</span><span>132</span></div>
+      <div class="needle">130.3</div>
     </div>
-  </footer>
-</main>
 
-<div class="sheet" id="sheet">
-  <div class="sheet-inner">
-    <h2>Schedule</h2>
-    <p class="sub">station time <span id="stationTime">—</span></p>
-    <button class="auto-row" id="autoToggle">
+    <footer>
+      <div class="stats">
+        <span><svg viewBox="0 0 24 24"><path d="M4 14v-4M8 17V7M12 20V4M16 17V7M20 14v-4"/></svg>128 kbps</span>
+        <span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0113 0"/></svg><b id="listeners">—</b></span>
+      </div>
+    </footer>
+  </section>
+
+  <section class="panel" id="panel-weekday" hidden>
+    <h2>Weekday Music</h2>
+    <p class="sub">station time <span id="stationTimeWeekday">—</span></p>
+    <button class="auto-row" id="autoToggleWeekday">
       <span>Auto — follow the schedule</span><i class="check">✓</i>
     </button>
-    <p class="pick-hint">or tap a show below to listen to that instead, any time</p>
-    <div id="sched"></div>
-  </div>
-</div>
+    <p class="pick-hint">Tap a daypart to listen to that instead, any time.</p>
+    <div id="schedWeekday"></div>
+  </section>
+
+  <section class="panel" id="panel-weekend" hidden>
+    <h2>Weekend Vibes</h2>
+    <p class="sub">station time <span id="stationTimeWeekend">—</span></p>
+    <button class="auto-row" id="autoToggleWeekend">
+      <span>Auto — follow the schedule</span><i class="check">✓</i>
+    </button>
+    <p class="pick-hint">Tap a genre to listen to that instead, any time.</p>
+    <div id="schedWeekend"></div>
+  </section>
+</main>
 
 <!-- No crossorigin attribute: it forces a CORS check against Icecast, which
      sends no Access-Control-Allow-Origin, and playback dies with
@@ -585,13 +631,29 @@ let fadeT = 0;                   // 0..1 progress of an in-flight crossfade
 const DUCK = 0.35;
 let ducked = false;
 
+/* A straight linear ramp put the incoming track at 50% volume by the
+   crossfade's midpoint — loud enough to fully clash with whatever's still
+   finishing, which is what read as the two tracks fighting rather than one
+   handing off to the other. The incoming track now stays noticeably
+   quieter through most of the fade and only rises to full in the final
+   stretch, once the outgoing track has mostly cleared out — fades in low,
+   then properly begins, rather than the two meeting head-on in the middle. */
+function fadeInCurve(t) {
+  const HOLD = 0.6, HOLD_VOL = 0.3;
+  if (t < HOLD) return (t / HOLD) * HOLD_VOL;
+  return HOLD_VOL + ((t - HOLD) / (1 - HOLD)) * (1 - HOLD_VOL);
+}
+
 /* Volume applies to whichever deck the listener can actually hear right
    now — just the front deck normally, both of them mid-crossfade, each
    scaled by how far into the fade it is, and all of it pulled down to DUCK
    while a drop is playing over the top. */
 function applyVolume() {
   const duckMul = ducked ? DUCK : 1;
-  decks.forEach((d, i) => { d.volume = masterVol * duckMul * (i === deckIdx ? 1 - fadeT : fadeT); });
+  decks.forEach((d, i) => {
+    const frac = i === deckIdx ? (1 - fadeT) : fadeInCurve(fadeT);
+    d.volume = masterVol * duckMul * frac;
+  });
   dropDeck.volume = masterVol;
 }
 function setVol(v) {
@@ -983,15 +1045,17 @@ const WEEKEND = [
   ["country", "Sun 14:00 – 22:00", "country"], ["sundaynight", "Sun 22:00 – Mon 06:00", "sunday night"],
 ];
 
+function renderList(el, list, activeKey) {
+  el.innerHTML = list.map(([key, when, name]) =>
+    `<button class="slot${key === activeKey ? " now" : ""}" data-show="${key}">` +
+    `<time>${when}</time><span>${name}</span></button>`).join("");
+}
+
 function renderSchedule(activeKey, isPick) {
-  const rows = (title, list) =>
-    `<h3>${title}</h3>` + list.map(([key, when, name]) =>
-      `<button class="slot${key === activeKey ? " now" : ""}" data-show="${key}">` +
-      `<time>${when}</time><span>${name}</span></button>`).join("");
-  document.getElementById("sched").innerHTML =
-    rows("Monday – Friday daytime", WEEKDAY) +
-    rows("Friday evening – Sunday", WEEKEND);
-  document.getElementById("autoToggle").classList.toggle("active", !isPick);
+  renderList(document.getElementById("schedWeekday"), WEEKDAY, activeKey);
+  renderList(document.getElementById("schedWeekend"), WEEKEND, activeKey);
+  document.getElementById("autoToggleWeekday").classList.toggle("active", !isPick);
+  document.getElementById("autoToggleWeekend").classList.toggle("active", !isPick);
 }
 
 /* --------------------------------------------------------- listen-your-way
@@ -1014,8 +1078,8 @@ function chooseShow(key) {
     if (manualShow) localStorage.setItem("pomato.manualShow", manualShow);
     else localStorage.removeItem("pomato.manualShow");
   } catch {}
-  sheet.classList.remove("open");
   showNow();
+  switchPanel("live");   // see it (and hear it) take effect immediately
   // Jump to the new pick right away rather than waiting for the track
   // already playing to end on its own schedule.
   if (preview && document.body.classList.contains("playing") && !crossfading) {
@@ -1023,17 +1087,27 @@ function chooseShow(key) {
   }
 }
 
-document.getElementById("sched").addEventListener("click", e => {
+document.getElementById("schedWeekday").addEventListener("click", e => {
   const row = e.target.closest(".slot");
   if (row) chooseShow(row.dataset.show);
 });
-document.getElementById("autoToggle").addEventListener("click", () => chooseShow("auto"));
+document.getElementById("schedWeekend").addEventListener("click", e => {
+  const row = e.target.closest(".slot");
+  if (row) chooseShow(row.dataset.show);
+});
+document.getElementById("autoToggleWeekday").addEventListener("click", () => chooseShow("auto"));
+document.getElementById("autoToggleWeekend").addEventListener("click", () => chooseShow("auto"));
 document.getElementById("pickPill").addEventListener("click", () => chooseShow("auto"));
 
-const sheet = document.getElementById("sheet");
-document.getElementById("menu").addEventListener("click", () => sheet.classList.add("open"));
-sheet.addEventListener("click", e => { if (e.target === sheet) sheet.classList.remove("open"); });
-addEventListener("keydown", e => { if (e.key === "Escape") sheet.classList.remove("open"); });
+/* ---------------------------------------------------------------- tabs */
+function switchPanel(name) {
+  document.querySelectorAll(".panel").forEach(p => { p.hidden = p.id !== `panel-${name}`; });
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.panel === name));
+}
+document.getElementById("tabbar").addEventListener("click", e => {
+  const btn = e.target.closest(".tab");
+  if (btn) switchPanel(btn.dataset.panel);
+});
 
 /* --------------------------------------------------------------- polling */
 let lastTrack = null;
@@ -1124,7 +1198,8 @@ async function showNow() {
   document.documentElement.dataset.band = s.palette;
   document.getElementById("show").textContent = s.label;
   dressDisc(s.show, s.art, s.clip);
-  document.getElementById("stationTime").textContent = s.station_time;
+  document.getElementById("stationTimeWeekday").textContent = s.station_time;
+  document.getElementById("stationTimeWeekend").textContent = s.station_time;
 
   const applied = manualShow && !liveConnected;
   const pickPill = document.getElementById("pickPill");
