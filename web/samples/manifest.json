@@ -460,5 +460,124 @@
     "file": "first-light-hymn.mp3",
     "duration": 217.2,
     "bpm": 145.3
+  },
+  {
+    "show": "sundaynight",
+    "title": "Leave the Door Wide Open",
+    "file": "leave-the-door-wide-open.mp3",
+    "duration": 283.4,
+    "bpm": 126.6
+  },
+  {
+    "show": "sundaynight",
+    "title": "Midnight Velvet",
+    "file": "midnight-velvet.mp3",
+    "duration": 264.9,
+    "bpm": 149.2
+  },
+  {
+    "show": "sundaynight",
+    "title": "Velvet After Midnight",
+    "file": "velvet-after-midnight.mp3",
+    "duration": 209.9,
+    "bpm": 134.5
+  },
+  {
+    "show": "sundaynight",
+    "title": "Velvet Hour Reprise",
+    "file": "velvet-hour-reprise.mp3",
+    "duration": 249.3,
+    "bpm": 124.5
+  },
+  {
+    "show": "sundaynight",
+    "title": "Deep Velvet Glow",
+    "file": "deep-velvet-glow.mp3",
+    "duration": 248.6,
+    "bpm": 150.8
+  },
+  {
+    "show": "sundaynight",
+    "title": "Midnight in Your Arms",
+    "file": "midnight-in-your-arms.mp3",
+    "duration": 322.1,
+    "bpm": 140.4
+  },
+  {
+    "show": "sundaynight",
+    "title": "Wrapped in Midnight",
+    "file": "wrapped-in-midnight.mp3",
+    "duration": 249.8,
+    "bpm": 124.7
+  },
+  {
+    "show": "sundaynight",
+    "title": "Moonlit Undertow",
+    "file": "moonlit-undertow.mp3",
+    "duration": 219.9,
+    "bpm": 122.7
+  },
+  {
+    "show": "sundaynight",
+    "title": "Undertow After Hours",
+    "file": "undertow-after-hours.mp3",
+    "duration": 242.8,
+    "bpm": 141.3
+  },
+  {
+    "show": "sundaynight",
+    "title": "Paper Cup Moon",
+    "file": "paper-cup-moon.mp3",
+    "duration": 220.7,
+    "bpm": 129.1
+  },
+  {
+    "show": "sundaynight",
+    "title": "Silk On My Collar",
+    "file": "silk-on-my-collar.mp3",
+    "duration": 345.0,
+    "bpm": 129.0
+  },
+  {
+    "show": "sundaynight",
+    "title": "Silk Undone",
+    "file": "silk-undone.mp3",
+    "duration": 288.9,
+    "bpm": 113.3
+  },
+  {
+    "show": "sundaynight",
+    "title": "Silk On My Pillow",
+    "file": "silk-on-my-pillow.mp3",
+    "duration": 227.0,
+    "bpm": 97.1
+  },
+  {
+    "show": "sundaynight",
+    "title": "Pillow Talk Slow",
+    "file": "pillow-talk-slow.mp3",
+    "duration": 302.4,
+    "bpm": 106.8
+  },
+  {
+    "show": "sundaynight",
+    "title": "Velvet On My Sleeve",
+    "file": "velvet-on-my-sleeve.mp3",
+    "duration": 252.0,
+    "bpm": 127.7
+  },
+  {
+    "show": "sundaynight",
+    "title": "Velvet Till Dawn",
+    "file": "velvet-till-dawn.mp3",
+    "duration": 252.0,
+    "bpm": 120.3
+  },
+  {
+    "show": "sundaynight",
+    "title": "Dawn in Velvet",
+    "file": "dawn-in-velvet.mp3",
+    "duration": 214.0,
+    "bpm": 115.6
   }
 ]
