@@ -362,5 +362,47 @@
     "file": "not-the-same.mp3",
     "duration": 176.6,
     "bpm": 125.5
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Blue Jean Porch",
+    "file": "blue-jean-porch.mp3",
+    "duration": 229.9,
+    "bpm": 158.2
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Porch Light Waltz",
+    "file": "porch-light-waltz.mp3",
+    "duration": 203.4,
+    "bpm": 131.6
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Heather on the Hill",
+    "file": "heather-on-the-hill.mp3",
+    "duration": 249.0,
+    "bpm": 129.9
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Wildflower Hill",
+    "file": "wildflower-hill.mp3",
+    "duration": 280.7,
+    "bpm": 126.9
+  },
+  {
+    "show": "sundayfolk",
+    "title": "How the Whole Thing Grows",
+    "file": "how-the-whole-thing-grows.mp3",
+    "duration": 289.0,
+    "bpm": 159.0
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Roots and Rafters",
+    "file": "roots-and-rafters.mp3",
+    "duration": 264.4,
+    "bpm": 167.7
   }
 ]
