@@ -404,5 +404,61 @@
     "file": "roots-and-rafters.mp3",
     "duration": 264.4,
     "bpm": 167.7
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Bus Stop Apricot",
+    "file": "bus-stop-apricot.mp3",
+    "duration": 228.1,
+    "bpm": 125.0
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Apricot Lane Bench",
+    "file": "apricot-lane-bench.mp3",
+    "duration": 207.0,
+    "bpm": 117.7
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Golden Hour Promise",
+    "file": "golden-hour-promise.mp3",
+    "duration": 184.0,
+    "bpm": 103.3
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Amber Hour Vow",
+    "file": "amber-hour-vow.mp3",
+    "duration": 193.2,
+    "bpm": 106.3
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Lantern Study",
+    "file": "lantern-study.mp3",
+    "duration": 268.8,
+    "bpm": 102.3
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Lantern Glow Sketch",
+    "file": "lantern-glow-sketch.mp3",
+    "duration": 270.0,
+    "bpm": 117.7
+  },
+  {
+    "show": "sundayfolk",
+    "title": "Morning Light",
+    "file": "morning-light.mp3",
+    "duration": 185.0,
+    "bpm": 122.3
+  },
+  {
+    "show": "sundayfolk",
+    "title": "First Light Hymn",
+    "file": "first-light-hymn.mp3",
+    "duration": 217.2,
+    "bpm": 145.3
   }
 ]
