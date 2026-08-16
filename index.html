@@ -26,7 +26,8 @@
     trap:          { label: "trap",           palette: "evening" },
     househours:    { label: "house hours",    palette: "night" },
     sundayfolk:    { label: "sunday folk",    palette: "morning" },
-    country:       { label: "country",        palette: "afternoon" }
+    country:       { label: "country",        palette: "afternoon" },
+    sundaynight:   { label: "sunday night",   palette: "night" }
   };
 
   function currentShow(when) {
@@ -44,7 +45,9 @@
       if (h < 6)  return "househours";              // Saturday night, same idea
       if (h < 14) return "sundayfolk";
       if (h < 22) return "country";
+      return "sundaynight";
     }
+    if (w === 1 && h < 6) return "sundaynight";     // Sunday night, past midnight
     if (h < 6)  return "smallhours";
     if (h < 10) return "firstlight";
     if (h < 12) return "slowroll";
@@ -936,7 +939,7 @@ const WEEKEND = [
   ["Fri 17:00 – Sat 06:00", "afro friday"], ["Sat 06:00 – 12:00", "saturday soul"],
   ["Sat 12:00 – 18:00", "hip hop hours"], ["Sat 18:00 – 22:00", "trap"],
   ["Sat 22:00 – Sun 06:00", "house hours"], ["Sun 06:00 – 14:00", "sunday folk"],
-  ["Sun 14:00 – 22:00", "country"],
+  ["Sun 14:00 – 22:00", "country"], ["Sun 22:00 – Mon 06:00", "sunday night"],
 ];
 
 function renderSchedule(liveLabel) {
@@ -1044,6 +1047,7 @@ async function showNow() {
    disc carries a different mood at 3am than it does on Saturday night. */
 const ENERGY = {
   smallhours: "calm",  sundayfolk: "calm",     firstlight: "calm",
+  sundaynight: "calm",
   slowroll: "steady",  midday: "steady",       longafternoon: "steady",
   slowdrive: "steady", saturdaysoul: "steady", country: "steady",
   nightgarage: "high", afrofriday: "high",     hiphop: "high",
