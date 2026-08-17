@@ -113,7 +113,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 18px 20px 26px;
+    padding: clamp(8px, 2dvh, 18px) 20px clamp(10px, 2.5dvh, 26px);
     position: relative;
     overflow-x: hidden;
     transition: background-color 2.5s ease, color 2.5s ease;
@@ -196,7 +196,11 @@
      label's breathing. Small Hours turns slowly and breathes deeply; House
      Hours turns fast and breathes quick. Same artwork, different character. */
   .deck {
-    width: min(74vw, 300px); aspect-ratio: 1; margin: 26px auto 0; position: relative;
+    /* Capped by viewport height as well as width now — on a short window
+       (a laptop at 720px tall was overflowing by 232px, needing a scroll
+       to see the footer) the disc was still claiming a fixed 300px
+       regardless of how little vertical room was actually left. */
+    width: min(74vw, 300px, 32dvh); aspect-ratio: 1; margin: clamp(10px, 3dvh, 26px) auto 0; position: relative;
     --spin: 7s; --pulse: 6s; --lift: 0px;
     transition: transform .5s cubic-bezier(.2,.7,.3,1);
     transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
@@ -273,7 +277,7 @@
 
   /* ------------------------------------------------------------ readout */
   .onair {
-    margin: 22px auto 0; display: flex; align-items: center; gap: 8px;
+    margin: clamp(8px, 2.5dvh, 22px) auto 0; display: flex; align-items: center; gap: 8px;
     padding: 7px 16px; border-radius: 999px;
     border: 1px solid var(--line);
     font-size: 10.5px; letter-spacing: .26em; text-transform: uppercase;
@@ -286,30 +290,30 @@
   @keyframes pulse { 50% { opacity: .3; } }
 
   .wordmark {
-    margin-top: 16px; text-align: center;
+    margin-top: clamp(6px, 2dvh, 16px); text-align: center;
     font-family: Georgia, "Iowan Old Style", serif;
-    font-size: clamp(30px, 9vw, 42px); font-weight: 400; line-height: 1.05;
+    font-size: clamp(24px, 9vw, 42px); font-weight: 400; line-height: 1.05;
   }
   .wordmark em { font-style: italic; color: var(--accent); }
 
   .track {
-    margin-top: 10px; text-align: center;
+    margin-top: clamp(4px, 1.2dvh, 10px); text-align: center;
     font-family: Georgia, serif; font-size: clamp(15px, 4.4vw, 19px);
     min-height: 24px;
   }
   .show-line {
-    margin-top: 6px; text-align: center; font-size: 10px;
+    margin-top: clamp(2px, .8dvh, 6px); text-align: center; font-size: 10px;
     letter-spacing: .26em; text-transform: uppercase; color: var(--ink-dim);
     min-height: 14px;
   }
   .upnext {
-    margin-top: 4px; text-align: center; font-size: 9.5px;
+    margin-top: clamp(2px, .5dvh, 4px); text-align: center; font-size: 9.5px;
     letter-spacing: .16em; text-transform: uppercase; color: var(--ink-dim);
     opacity: .65; min-height: 12px;
   }
 
   .pick-pill {
-    margin: 8px auto 0; display: block; padding: 6px 14px;
+    margin: clamp(4px, 1dvh, 8px) auto 0; display: block; padding: 6px 14px;
     border-radius: 999px; border: 1px solid var(--accent);
     background: rgba(255,255,255,.03); color: var(--accent);
     font: inherit; font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase;
@@ -319,7 +323,7 @@
 
   /* ---------------------------------------------------------- transport */
   .transport {
-    margin-top: 22px; display: flex; align-items: center;
+    margin-top: clamp(8px, 2.5dvh, 22px); display: flex; align-items: center;
     justify-content: center; gap: 22px;
   }
   .play-btn {
@@ -338,7 +342,7 @@
   body.playing .pause-icon { display: block; }
 
   /* ------------------------------------------------------------- volume */
-  .vol { margin-top: 22px; display: flex; align-items: center; gap: 12px; color: var(--ink-dim); }
+  .vol { margin-top: clamp(8px, 2.5dvh, 22px); display: flex; align-items: center; gap: 12px; color: var(--ink-dim); }
   .vol svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
   .vol input {
     -webkit-appearance: none; appearance: none;
@@ -355,7 +359,7 @@
   }
 
   /* --------------------------------------------------------------- dial */
-  .dial { margin-top: 26px; }
+  .dial { margin-top: clamp(8px, 3dvh, 26px); }
   /* space-between with fixed-width marks, not flex:1 — forty-one flexed
      children each take a seventeen-pixel share and read as blocks, not ticks. */
   .ticks { display: flex; justify-content: space-between; align-items: flex-end; height: 22px; }
@@ -372,7 +376,7 @@
   }
 
   /* ------------------------------------------------------------- footer */
-  footer { margin-top: 26px; padding-top: 22px; display: flex; justify-content: center; }
+  footer { margin-top: clamp(8px, 3dvh, 26px); padding-top: clamp(8px, 2.5dvh, 22px); display: flex; justify-content: center; }
   .stats {
     display: flex; align-items: center; gap: 0;
     border: 1px solid var(--line); border-radius: 999px;
@@ -477,6 +481,28 @@
     .tagline { display: none; }
     .wordmark-sm { font-size: 11px; letter-spacing: .1em; }
     .freq-pill .fm { display: none; }
+  }
+
+  /* Short viewport — a laptop at 720p was the case that started this: the
+     dvh-based clamps above ease off gradually, which looks right on a
+     phone (always tall relative to its width) but wasn't aggressive enough
+     to actually clear a ~720-800px-tall window without still needing a
+     scroll. This tightens every gap and the disc itself further, by a
+     calculated budget rather than trial and error, so the whole player —
+     header through footer — fits inside the viewport with room to spare. */
+  @media (max-height: 760px) {
+    body { padding-top: 10px; padding-bottom: 14px; }
+    .deck { width: min(74vw, 26dvh); margin-top: 10px; }
+    .onair { margin-top: 10px; }
+    .wordmark { margin-top: 6px; font-size: clamp(22px, 7vw, 34px); }
+    .track { margin-top: 4px; }
+    .show-line { margin-top: 2px; }
+    .upnext { margin-top: 2px; }
+    .pick-pill { margin-top: 4px; }
+    .transport { margin-top: 10px; }
+    .vol { margin-top: 10px; }
+    .dial { margin-top: 10px; }
+    footer { margin-top: 10px; padding-top: 10px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
