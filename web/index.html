@@ -404,16 +404,31 @@
     width: 100%; overflow: hidden; max-height: 0;
     transition: max-height .25s ease;
   }
-  .nav-menu.open { max-height: 220px; }
-  .nav-item {
-    display: block; width: 100%; padding: 12px 14px; margin-top: 6px;
-    border-radius: 8px; border: 1px solid var(--line);
-    background: rgba(255,255,255,.02); color: var(--ink);
-    font: inherit; font-size: 13px; text-align: left; cursor: pointer;
-    transition: border-color .2s ease, background .2s ease;
+  .nav-menu.open { max-height: 280px; }
+  /* Card the pill rows sit inside, rather than them floating loose under
+     the header — same rounded-card language as the old schedule sheet,
+     just staying open only as long as the menu is. */
+  .nav-menu-inner {
+    margin-top: 10px; padding: 10px; border-radius: 18px;
+    border: 1px solid var(--line); background: var(--bg);
   }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 12px 16px; margin-top: 6px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.02);
+    color: var(--ink); font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+  .nav-item:first-child { margin-top: 0; }
   .nav-item:hover { border-color: var(--accent); }
-  .nav-item.active { color: var(--accent); border-color: var(--accent); }
+  .nav-item.active {
+    color: var(--accent); border-color: var(--accent);
+    background: rgba(255,255,255,.04);
+  }
+  .nav-item svg {
+    width: 18px; height: 18px; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 1.6;
+  }
 
   .panel { width: 100%; }
   /* :not([hidden]) rather than a bare selector — an ID selector's
@@ -539,9 +554,20 @@
      player for space. Picking a show in either schedule panel jumps back
      to Live so the choice is immediately visible and audible. -->
 <nav class="nav-menu" id="navMenu" hidden>
-  <button class="nav-item active" data-panel="live">Live Radio</button>
-  <button class="nav-item" data-panel="weekday">Weekday Music</button>
-  <button class="nav-item" data-panel="weekend">Weekend Vibes</button>
+  <div class="nav-menu-inner">
+    <button class="nav-item active" data-panel="live">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><path d="M7.5 7.5a6.4 6.4 0 000 9M16.5 16.5a6.4 6.4 0 000-9"/></svg>
+      <span>Live Radio</span>
+    </button>
+    <button class="nav-item" data-panel="weekday">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span>Weekday Music</span>
+    </button>
+    <button class="nav-item" data-panel="weekend">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M5 5l1.4 1.4M17.6 17.6L19 19M3 12h2M19 12h2M5 19l1.4-1.4M17.6 6.4L19 5"/></svg>
+      <span>Weekend Vibes</span>
+    </button>
+  </div>
 </nav>
 
 <main>
