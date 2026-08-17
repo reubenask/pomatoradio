@@ -138,12 +138,12 @@
     66%{transform:translate(2%,-3%)} 100%{transform:translate(0,0)}
   }
 
-  /* header, .tabbar and main are now three sibling flex children of body
-     (the tab bar sits between the header and whichever panel is active,
+  /* header, .nav-menu and main are three sibling flex children of body
+     (the dropdown sits between the header and whichever panel is active,
      rather than everything nesting inside one <main>) — each needs the
      same width cap independently so they still read as one aligned column
      instead of each finding its own natural width. */
-  header, .tabbar, main { width: min(100%, 430px); }
+  header, .nav-menu, main { width: min(100%, 430px); }
   main { position: relative; display: flex; flex-direction: column; }
 
   /* ------------------------------------------------------------- header */
@@ -388,23 +388,28 @@
   .stats svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 
   /* ------------------------------------------------------------ schedule */
-  /* --------------------------------------------------------------- tabs
-     Three sibling views (Live / Weekday / Weekend) instead of a player
-     page with a schedule modal bolted on. .panel just toggles [hidden];
-     no position:fixed overlay, no backdrop, no open/close animation to
-     manage — a plain content swap. */
-  .tabbar {
-    display: flex; gap: 6px; margin: 14px 0 4px;
-    border-bottom: 1px solid var(--line);
+  /* --------------------------------------------------------------- menu
+     Three sibling views (Live / Weekday / Weekend). A permanent tab bar
+     was the first version of this; a hamburger opening a short dropdown
+     of subsections reads more like an actual menu and stops competing
+     with the player for space when you're not switching. Slides open
+     rather than just appearing — max-height is the one property that
+     animates cleanly on a from-height-0 element without knowing its
+     content height up front. */
+  .nav-menu {
+    width: 100%; overflow: hidden; max-height: 0;
+    transition: max-height .25s ease;
   }
-  .tab {
-    flex: 1; padding: 10px 4px 12px; background: none; border: none;
-    border-bottom: 2px solid transparent; margin-bottom: -1px;
-    color: var(--ink-dim); font: inherit; font-size: 11px; letter-spacing: .06em;
-    cursor: pointer; transition: color .2s ease, border-color .2s ease;
+  .nav-menu.open { max-height: 220px; }
+  .nav-item {
+    display: block; width: 100%; padding: 12px 14px; margin-top: 6px;
+    border-radius: 8px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.02); color: var(--ink);
+    font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
   }
-  .tab:hover { color: var(--ink); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-item:hover { border-color: var(--accent); }
+  .nav-item.active { color: var(--accent); border-color: var(--accent); }
 
   .panel { width: 100%; }
   /* :not([hidden]) rather than a bare selector — an ID selector's
@@ -434,13 +439,13 @@
     margin-bottom: 14px; line-height: 1.4;
   }
 
-  .sheet h3 {
-    font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase;
-    color: var(--ink-dim); margin: 16px 0 8px;
-  }
+  /* A plain <button> carries the browser's own default border on every
+     side — only border-bottom was ever meant to show, but nothing had
+     reset the other three, which is what made every row look like a
+     boxed pill instead of a clean list line. */
   .slot {
-    display: flex; gap: 12px; padding: 6px 4px; font-size: 12.5px;
-    border-bottom: 1px solid var(--line); border-radius: 6px;
+    display: flex; gap: 12px; padding: 10px 4px; font-size: 12.5px;
+    border: none; border-bottom: 1px solid var(--line);
     width: 100%; background: none; color: inherit; font-family: inherit;
     text-align: left; cursor: pointer; transition: background .15s ease;
   }
@@ -485,15 +490,9 @@
 <div class="grain"></div>
 
 <header>
-  <!-- Invisible twin of the freq-pill on the right, so the brand centers
-       in the remaining space symmetrically. It used to balance against the
-       menu button that's gone now the tabs replaced it — an exact clone
-       (rather than a guessed spacer width) keeps it correct at every
-       breakpoint the pill itself reflows at. -->
-  <div class="freq-pill" aria-hidden="true" style="visibility:hidden">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><path d="M7.5 7.5a6.4 6.4 0 000 9M16.5 16.5a6.4 6.4 0 000-9"/></svg>
-    130.3<span class="fm">&nbsp;FM</span>
-  </div>
+  <button class="icon-btn" id="menu" aria-label="Open menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
   <div class="brand">
     <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="wordmark-sm">Pomato <em>Radio</em></div>
@@ -507,13 +506,16 @@
 
 <!-- Three separate views instead of one page carrying the player, the
      weekday dayparts and the weekend genres all at once — that was the
-     "too much information" complaint. Each tab is its own focused screen;
-     picking a show in either schedule tab jumps back to Live so the choice
-     is immediately visible and audible, not just recorded somewhere. -->
-<nav class="tabbar" id="tabbar">
-  <button class="tab active" data-panel="live">Live Radio</button>
-  <button class="tab" data-panel="weekday">Weekday Music</button>
-  <button class="tab" data-panel="weekend">Weekend Vibes</button>
+     "too much information" complaint. A persistent tab bar was the first
+     attempt at switching between them; the hamburger + dropdown is closer
+     to what a radio app menu actually looks like, and reads as "here are
+     subsections" rather than three permanent buttons competing with the
+     player for space. Picking a show in either schedule panel jumps back
+     to Live so the choice is immediately visible and audible. -->
+<nav class="nav-menu" id="navMenu" hidden>
+  <button class="nav-item active" data-panel="live">Live Radio</button>
+  <button class="nav-item" data-panel="weekday">Weekday Music</button>
+  <button class="nav-item" data-panel="weekend">Weekend Vibes</button>
 </nav>
 
 <main>
@@ -1099,13 +1101,37 @@ document.getElementById("autoToggleWeekday").addEventListener("click", () => cho
 document.getElementById("autoToggleWeekend").addEventListener("click", () => chooseShow("auto"));
 document.getElementById("pickPill").addEventListener("click", () => chooseShow("auto"));
 
-/* ---------------------------------------------------------------- tabs */
+/* ---------------------------------------------------------------- menu */
+const navMenu = document.getElementById("navMenu");
+const menuBtn = document.getElementById("menu");
+
+function closeMenu() {
+  navMenu.classList.remove("open");
+  menuBtn.setAttribute("aria-expanded", "false");
+  // hidden waits for the slide-up transition (250ms) to actually finish —
+  // setting it immediately would cut the closing animation off mid-motion,
+  // since display:none can't be transitioned. Guarded in case the menu got
+  // reopened again before this fires.
+  setTimeout(() => { if (!navMenu.classList.contains("open")) navMenu.hidden = true; }, 260);
+}
+function toggleMenu() {
+  if (navMenu.classList.contains("open")) { closeMenu(); return; }
+  navMenu.hidden = false;
+  // hidden has to come off before adding .open, or the max-height
+  // transition has nothing to animate from — the browser needs a layout
+  // frame where the element is display:block at max-height:0 first.
+  requestAnimationFrame(() => navMenu.classList.add("open"));
+  menuBtn.setAttribute("aria-expanded", "true");
+}
+menuBtn.addEventListener("click", toggleMenu);
+
 function switchPanel(name) {
   document.querySelectorAll(".panel").forEach(p => { p.hidden = p.id !== `panel-${name}`; });
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.panel === name));
+  document.querySelectorAll(".nav-item").forEach(t => t.classList.toggle("active", t.dataset.panel === name));
+  closeMenu();
 }
-document.getElementById("tabbar").addEventListener("click", e => {
-  const btn = e.target.closest(".tab");
+navMenu.addEventListener("click", e => {
+  const btn = e.target.closest(".nav-item");
   if (btn) switchPanel(btn.dataset.panel);
 });
 
