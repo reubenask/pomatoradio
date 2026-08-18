@@ -705,5 +705,285 @@
     "file": "porch-step-dust.mp3",
     "duration": 205.0,
     "bpm": 101.8
+  },
+  {
+    "show": "firstlight",
+    "title": "Palm Shade Bounce",
+    "file": "palm-shade-bounce.mp3",
+    "duration": 254.7,
+    "bpm": 117.2
+  },
+  {
+    "show": "firstlight",
+    "title": "Summer Bounce",
+    "file": "summer-bounce.mp3",
+    "duration": 258.4,
+    "bpm": 109.8
+  },
+  {
+    "show": "firstlight",
+    "title": "Sunbaked Bounce",
+    "file": "sunbaked-bounce.mp3",
+    "duration": 135.0,
+    "bpm": 152.6
+  },
+  {
+    "show": "firstlight",
+    "title": "Summer Porch Bounce",
+    "file": "summer-porch-bounce.mp3",
+    "duration": 170.0,
+    "bpm": 146.0
+  },
+  {
+    "show": "firstlight",
+    "title": "Golden Summer Skip",
+    "file": "golden-summer-skip.mp3",
+    "duration": 215.8,
+    "bpm": 103.1
+  },
+  {
+    "show": "firstlight",
+    "title": "Summer Sway",
+    "file": "summer-sway.mp3",
+    "duration": 192.1,
+    "bpm": 128.8
+  },
+  {
+    "show": "firstlight",
+    "title": "Midday Bounce",
+    "file": "midday-bounce.mp3",
+    "duration": 174.4,
+    "bpm": 152.6
+  },
+  {
+    "show": "firstlight",
+    "title": "Summer Haze Bounce",
+    "file": "summer-haze-bounce.mp3",
+    "duration": 219.9,
+    "bpm": 153.0
+  },
+  {
+    "show": "firstlight",
+    "title": "Barefoot Summer Bounce",
+    "file": "barefoot-summer-bounce.mp3",
+    "duration": 204.8,
+    "bpm": 130.3
+  },
+  {
+    "show": "firstlight",
+    "title": "Sunlight on the Vinyl",
+    "file": "sunlight-on-the-vinyl.mp3",
+    "duration": 220.0,
+    "bpm": 82.8
+  },
+  {
+    "show": "firstlight",
+    "title": "Vinyl in the Sun",
+    "file": "vinyl-in-the-sun.mp3",
+    "duration": 209.3,
+    "bpm": 137.0
+  },
+  {
+    "show": "firstlight",
+    "title": "Sunlit Brass",
+    "file": "sunlit-brass.mp3",
+    "duration": 195.0,
+    "bpm": 102.1
+  },
+  {
+    "show": "firstlight",
+    "title": "Brass in the Morning Light",
+    "file": "brass-in-the-morning-light.mp3",
+    "duration": 237.8,
+    "bpm": 133.7
+  },
+  {
+    "show": "firstlight",
+    "title": "Sunlit Groove",
+    "file": "sunlit-groove.mp3",
+    "duration": 255.0,
+    "bpm": 136.4
+  },
+  {
+    "show": "firstlight",
+    "title": "Morning Groove Drift",
+    "file": "morning-groove-drift.mp3",
+    "duration": 341.2,
+    "bpm": 82.0
+  },
+  {
+    "show": "firstlight",
+    "title": "Sunshine in the Groove",
+    "file": "sunshine-in-the-groove.mp3",
+    "duration": 148.5,
+    "bpm": 82.9
+  },
+  {
+    "show": "firstlight",
+    "title": "Groove in the Sunshine",
+    "file": "groove-in-the-sunshine.mp3",
+    "duration": 210.0,
+    "bpm": 158.4
+  },
+  {
+    "show": "slowroll",
+    "title": "Groove in the Static",
+    "file": "groove-in-the-static.mp3",
+    "duration": 262.5,
+    "bpm": 101.6
+  },
+  {
+    "show": "slowroll",
+    "title": "Midnight Palm Circuit",
+    "file": "midnight-palm-circuit.mp3",
+    "duration": 225.2,
+    "bpm": 98.8
+  },
+  {
+    "show": "slowroll",
+    "title": "Palm Frond Sway",
+    "file": "palm-frond-sway.mp3",
+    "duration": 230.0,
+    "bpm": 93.1
+  },
+  {
+    "show": "slowroll",
+    "title": "Shaded Palm Groove",
+    "file": "shaded-palm-groove.mp3",
+    "duration": 187.8,
+    "bpm": 100.3
+  },
+  {
+    "show": "slowroll",
+    "title": "Pocket Full of Dust",
+    "file": "pocket-full-of-dust.mp3",
+    "duration": 268.5,
+    "bpm": 101.8
+  },
+  {
+    "show": "slowroll",
+    "title": "Dust in My Pocket",
+    "file": "dust-in-my-pocket.mp3",
+    "duration": 154.3,
+    "bpm": 100.0
+  },
+  {
+    "show": "slowroll",
+    "title": "Sun Juice Swing",
+    "file": "sun-juice-swing.mp3",
+    "duration": 211.1,
+    "bpm": 93.1
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunday Morning Jazz",
+    "file": "sunday-morning-jazz.mp3",
+    "duration": 179.0,
+    "bpm": 97.4
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunday Morning Static",
+    "file": "sunday-morning-static.mp3",
+    "duration": 100.0,
+    "bpm": 138.5
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunlit Pocket Change",
+    "file": "sunlit-pocket-change.mp3",
+    "duration": 169.8,
+    "bpm": 95.2
+  },
+  {
+    "show": "slowroll",
+    "title": "Pocket Change in the Sun",
+    "file": "pocket-change-in-the-sun.mp3",
+    "duration": 125.9,
+    "bpm": 97.0
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunlit Vinyl Drip",
+    "file": "sunlit-vinyl-drip.mp3",
+    "duration": 188.4,
+    "bpm": 102.3
+  },
+  {
+    "show": "slowroll",
+    "title": "Vinyl Drip Roll",
+    "file": "vinyl-drip-roll.mp3",
+    "duration": 190.4,
+    "bpm": 97.6
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunshine Static",
+    "file": "sunshine-static.mp3",
+    "duration": 188.4,
+    "bpm": 92.8
+  },
+  {
+    "show": "slowroll",
+    "title": "Static in the Sunshine",
+    "file": "static-in-the-sunshine.mp3",
+    "duration": 159.7,
+    "bpm": 99.3
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunny Groove Roll",
+    "file": "sunny-groove-roll.mp3",
+    "duration": 97.3,
+    "bpm": 101.3
+  },
+  {
+    "show": "slowroll",
+    "title": "Groove and Sunbeams",
+    "file": "groove-and-sunbeams.mp3",
+    "duration": 190.0,
+    "bpm": 94.6
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunlit Roll",
+    "file": "sunlit-roll.mp3",
+    "duration": 213.7,
+    "bpm": 90.9
+  },
+  {
+    "show": "slowroll",
+    "title": "Sun-Kissed Groove",
+    "file": "sun-kissed-groove.mp3",
+    "duration": 312.0,
+    "bpm": 112.5
+  },
+  {
+    "show": "slowroll",
+    "title": "Golden Groove Roll",
+    "file": "golden-groove-roll.mp3",
+    "duration": 177.8,
+    "bpm": 107.7
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunshine in the Static",
+    "file": "sunshine-in-the-static.mp3",
+    "duration": 135.8,
+    "bpm": 94.0
+  },
+  {
+    "show": "slowroll",
+    "title": "Sunny Static Roll",
+    "file": "sunny-static-roll.mp3",
+    "duration": 241.4,
+    "bpm": 98.4
+  },
+  {
+    "show": "slowroll",
+    "title": "Wobble Alley Groove",
+    "file": "wobble-alley-groove.mp3",
+    "duration": 215.3,
+    "bpm": 99.5
   }
 ]
