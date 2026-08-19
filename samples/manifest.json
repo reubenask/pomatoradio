@@ -985,5 +985,187 @@
     "file": "wobble-alley-groove.mp3",
     "duration": 215.3,
     "bpm": 99.5
+  },
+  {
+    "show": "midday",
+    "title": "Afternoon in Blue",
+    "file": "afternoon-in-blue.mp3",
+    "duration": 197.6,
+    "bpm": 111.0
+  },
+  {
+    "show": "midday",
+    "title": "Backseat Boogie",
+    "file": "backseat-boogie.mp3",
+    "duration": 190.8,
+    "bpm": 112.3
+  },
+  {
+    "show": "midday",
+    "title": "Backseat Boogie Reprise",
+    "file": "backseat-boogie-reprise.mp3",
+    "duration": 360.0,
+    "bpm": 115.1
+  },
+  {
+    "show": "midday",
+    "title": "Chop Street Groove",
+    "file": "chop-street-groove.mp3",
+    "duration": 261.9,
+    "bpm": 112.6
+  },
+  {
+    "show": "midday",
+    "title": "Lemon Daze",
+    "file": "lemon-daze.mp3",
+    "duration": 272.8,
+    "bpm": 105.0
+  },
+  {
+    "show": "midday",
+    "title": "Lemon Daze Drift",
+    "file": "lemon-daze-drift.mp3",
+    "duration": 144.8,
+    "bpm": 105.4
+  },
+  {
+    "show": "midday",
+    "title": "Lunchtime Window",
+    "file": "lunchtime-window.mp3",
+    "duration": 249.0,
+    "bpm": 93.6
+  },
+  {
+    "show": "midday",
+    "title": "Midnight Groove",
+    "file": "midnight-groove.mp3",
+    "duration": 206.2,
+    "bpm": 112.0
+  },
+  {
+    "show": "midday",
+    "title": "Midnight in the Caf\u00e9",
+    "file": "midnight-in-the-caf.mp3",
+    "duration": 168.5,
+    "bpm": 104.0
+  },
+  {
+    "show": "midday",
+    "title": "Caf\u00e9 Lights at Midnight",
+    "file": "caf-lights-at-midnight.mp3",
+    "duration": 159.7,
+    "bpm": 103.9
+  },
+  {
+    "show": "midday",
+    "title": "Patio Bounce",
+    "file": "patio-bounce.mp3",
+    "duration": 215.0,
+    "bpm": 113.0
+  },
+  {
+    "show": "midday",
+    "title": "Patio Skip",
+    "file": "patio-skip.mp3",
+    "duration": 368.9,
+    "bpm": 111.9
+  },
+  {
+    "show": "midday",
+    "title": "Pocket Groove",
+    "file": "pocket-groove.mp3",
+    "duration": 249.2,
+    "bpm": 113.9
+  },
+  {
+    "show": "midday",
+    "title": "Sunday Morning Groove",
+    "file": "sunday-morning-groove.mp3",
+    "duration": 279.3,
+    "bpm": 111.0
+  },
+  {
+    "show": "midday",
+    "title": "Sunday Morning Sway",
+    "file": "sunday-morning-sway.mp3",
+    "duration": 226.0,
+    "bpm": 112.1
+  },
+  {
+    "show": "midday",
+    "title": "Sunday Morning Shuffle",
+    "file": "sunday-morning-shuffle.mp3",
+    "duration": 194.2,
+    "bpm": 112.7
+  },
+  {
+    "show": "midday",
+    "title": "Sunday Shuffle Reprise",
+    "file": "sunday-shuffle-reprise.mp3",
+    "duration": 204.9,
+    "bpm": 114.1
+  },
+  {
+    "show": "midday",
+    "title": "Late Sunday Shuffle",
+    "file": "late-sunday-shuffle.mp3",
+    "duration": 229.5,
+    "bpm": 112.0
+  },
+  {
+    "show": "midday",
+    "title": "Sunday Shuffle Drift",
+    "file": "sunday-shuffle-drift.mp3",
+    "duration": 214.8,
+    "bpm": 112.2
+  },
+  {
+    "show": "midday",
+    "title": "Sunlight Through the Window",
+    "file": "sunlight-through-the-window.mp3",
+    "duration": 251.4,
+    "bpm": 107.6
+  },
+  {
+    "show": "midday",
+    "title": "Velvet After Rain",
+    "file": "velvet-after-rain.mp3",
+    "duration": 225.0,
+    "bpm": 98.3
+  },
+  {
+    "show": "midday",
+    "title": "Rain-Soaked Velvet",
+    "file": "rain-soaked-velvet.mp3",
+    "duration": 440.0,
+    "bpm": 90.3
+  },
+  {
+    "show": "midday",
+    "title": "Velvet Afternoon",
+    "file": "velvet-afternoon.mp3",
+    "duration": 280.0,
+    "bpm": 99.3
+  },
+  {
+    "show": "midday",
+    "title": "Velvet Afternoon Glow",
+    "file": "velvet-afternoon-glow.mp3",
+    "duration": 225.0,
+    "bpm": 100.1
+  },
+  {
+    "show": "midday",
+    "title": "Afternoon in Velvet",
+    "file": "afternoon-in-velvet.mp3",
+    "duration": 251.7,
+    "bpm": 100.0
+  },
+  {
+    "show": "midday",
+    "title": "Velvet Afternoon Drift",
+    "file": "velvet-afternoon-drift.mp3",
+    "duration": 292.4,
+    "bpm": 99.0
   }
 ]
