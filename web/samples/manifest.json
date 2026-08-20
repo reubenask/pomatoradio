@@ -1167,5 +1167,222 @@
     "file": "velvet-afternoon-drift.mp3",
     "duration": 292.4,
     "bpm": 99.0
+  },
+  {
+    "show": "longafternoon",
+    "title": "Beneath the Static",
+    "file": "beneath-the-static.mp3",
+    "duration": 267.6,
+    "bpm": 126.7
+  },
+  {
+    "show": "longafternoon",
+    "title": "Static Undertow",
+    "file": "static-undertow.mp3",
+    "duration": 192.7,
+    "bpm": 121.8
+  },
+  {
+    "show": "longafternoon",
+    "title": "Beneath the Hum",
+    "file": "beneath-the-hum.mp3",
+    "duration": 282.7,
+    "bpm": 123.4
+  },
+  {
+    "show": "longafternoon",
+    "title": "Low Static Drift",
+    "file": "low-static-drift.mp3",
+    "duration": 270.0,
+    "bpm": 125.8
+  },
+  {
+    "show": "longafternoon",
+    "title": "Static and Silence",
+    "file": "static-and-silence.mp3",
+    "duration": 239.2,
+    "bpm": 130.4
+  },
+  {
+    "show": "longafternoon",
+    "title": "Sinking Static",
+    "file": "sinking-static.mp3",
+    "duration": 216.0,
+    "bpm": 121.4
+  },
+  {
+    "show": "longafternoon",
+    "title": "Beneath the Surface",
+    "file": "beneath-the-surface.mp3",
+    "duration": 298.5,
+    "bpm": 123.3
+  },
+  {
+    "show": "longafternoon",
+    "title": "Just Below the Surface",
+    "file": "just-below-the-surface.mp3",
+    "duration": 250.0,
+    "bpm": 118.9
+  },
+  {
+    "show": "longafternoon",
+    "title": "Fading Into Silence",
+    "file": "fading-into-silence.mp3",
+    "duration": 210.5,
+    "bpm": 116.4
+  },
+  {
+    "show": "longafternoon",
+    "title": "Long Afternoon Pulse",
+    "file": "long-afternoon-pulse.mp3",
+    "duration": 260.0,
+    "bpm": 124.3
+  },
+  {
+    "show": "longafternoon",
+    "title": "Faint Pulse at Midnight",
+    "file": "faint-pulse-at-midnight.mp3",
+    "duration": 386.1,
+    "bpm": 122.5
+  },
+  {
+    "show": "longafternoon",
+    "title": "Pulse in the Dark",
+    "file": "pulse-in-the-dark.mp3",
+    "duration": 334.8,
+    "bpm": 117.0
+  },
+  {
+    "show": "longafternoon",
+    "title": "Slow Midnight Pulse",
+    "file": "slow-midnight-pulse.mp3",
+    "duration": 329.9,
+    "bpm": 112.0
+  },
+  {
+    "show": "longafternoon",
+    "title": "Negative Space",
+    "file": "negative-space.mp3",
+    "duration": 338.7,
+    "bpm": 125.5
+  },
+  {
+    "show": "longafternoon",
+    "title": "Room for Negative Space",
+    "file": "room-for-negative-space.mp3",
+    "duration": 297.9,
+    "bpm": 111.0
+  },
+  {
+    "show": "longafternoon",
+    "title": "Negative Space Drift",
+    "file": "negative-space-drift.mp3",
+    "duration": 358.6,
+    "bpm": 125.9
+  },
+  {
+    "show": "longafternoon",
+    "title": "Quiet Negative Space",
+    "file": "quiet-negative-space.mp3",
+    "duration": 342.1,
+    "bpm": 125.2
+  },
+  {
+    "show": "longafternoon",
+    "title": "Quiet After Rain",
+    "file": "quiet-after-rain.mp3",
+    "duration": 260.0,
+    "bpm": 109.1
+  },
+  {
+    "show": "longafternoon",
+    "title": "Stillness After Rain",
+    "file": "stillness-after-rain.mp3",
+    "duration": 183.4,
+    "bpm": 118.8
+  },
+  {
+    "show": "longafternoon",
+    "title": "After the Rain Settles",
+    "file": "after-the-rain-settles.mp3",
+    "duration": 209.1,
+    "bpm": 125.2
+  },
+  {
+    "show": "longafternoon",
+    "title": "Rainy Window Drift",
+    "file": "rainy-window-drift.mp3",
+    "duration": 179.3,
+    "bpm": 88.7
+  },
+  {
+    "show": "longafternoon",
+    "title": "Slow Needle Drift",
+    "file": "slow-needle-drift.mp3",
+    "duration": 190.1,
+    "bpm": 73.2
+  },
+  {
+    "show": "longafternoon",
+    "title": "Static Between Stars",
+    "file": "static-between-stars.mp3",
+    "duration": 277.3,
+    "bpm": 120.1
+  },
+  {
+    "show": "longafternoon",
+    "title": "Faint Static Between Stars",
+    "file": "faint-static-between-stars.mp3",
+    "duration": 216.5,
+    "bpm": 104.7
+  },
+  {
+    "show": "longafternoon",
+    "title": "Static Among the Stars",
+    "file": "static-among-the-stars.mp3",
+    "duration": 249.4,
+    "bpm": 149.2
+  },
+  {
+    "show": "longafternoon",
+    "title": "Distant Static Field",
+    "file": "distant-static-field.mp3",
+    "duration": 306.4,
+    "bpm": 109.2
+  },
+  {
+    "show": "longafternoon",
+    "title": "Still Water Loop",
+    "file": "still-water-loop.mp3",
+    "duration": 226.8,
+    "bpm": 119.8
+  },
+  {
+    "show": "longafternoon",
+    "title": "Still Water Drift",
+    "file": "still-water-drift.mp3",
+    "duration": 370.7,
+    "bpm": 141.7
+  },
+  {
+    "show": "longafternoon",
+    "title": "Submerged Pulse",
+    "file": "submerged-pulse.mp3",
+    "duration": 267.2,
+    "bpm": 130.6
+  },
+  {
+    "show": "longafternoon",
+    "title": "Pulse Below the Surface",
+    "file": "pulse-below-the-surface.mp3",
+    "duration": 375.5,
+    "bpm": 113.2
+  },
+  {
+    "show": "longafternoon",
+    "title": "Velvet Dust Tape",
+    "file": "velvet-dust-tape.mp3",
+    "duration": 160.0,
+    "bpm": 113.6
   }
 ]
