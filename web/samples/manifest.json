@@ -1384,5 +1384,152 @@
     "file": "velvet-dust-tape.mp3",
     "duration": 160.0,
     "bpm": 113.6
+  },
+  {
+    "show": "slowdrive",
+    "title": "After The Dial",
+    "file": "after-the-dial.mp3",
+    "duration": 210.0,
+    "bpm": 93.7
+  },
+  {
+    "show": "slowdrive",
+    "title": "After The Replay",
+    "file": "after-the-replay.mp3",
+    "duration": 230.6,
+    "bpm": 92.5
+  },
+  {
+    "show": "slowdrive",
+    "title": "Replaying After Hours",
+    "file": "replaying-after-hours.mp3",
+    "duration": 253.4,
+    "bpm": 91.5
+  },
+  {
+    "show": "slowdrive",
+    "title": "Late Night Silk",
+    "file": "late-night-silk.mp3",
+    "duration": 230.0,
+    "bpm": 94.8
+  },
+  {
+    "show": "slowdrive",
+    "title": "Midnight Drive",
+    "file": "midnight-drive.mp3",
+    "duration": 247.1,
+    "bpm": 97.5
+  },
+  {
+    "show": "slowdrive",
+    "title": "Late Night Drive",
+    "file": "late-night-drive.mp3",
+    "duration": 252.1,
+    "bpm": 96.1
+  },
+  {
+    "show": "slowdrive",
+    "title": "Slow Midnight Drive",
+    "file": "slow-midnight-drive.mp3",
+    "duration": 270.8,
+    "bpm": 93.9
+  },
+  {
+    "show": "slowdrive",
+    "title": "Drive Through Midnight",
+    "file": "drive-through-midnight.mp3",
+    "duration": 359.0,
+    "bpm": 99.7
+  },
+  {
+    "show": "slowdrive",
+    "title": "Highway Midnight Groove",
+    "file": "highway-midnight-groove.mp3",
+    "duration": 235.0,
+    "bpm": 93.8
+  },
+  {
+    "show": "slowdrive",
+    "title": "Midnight in the Blue Room",
+    "file": "midnight-in-the-blue-room.mp3",
+    "duration": 365.7,
+    "bpm": 96.1
+  },
+  {
+    "show": "slowdrive",
+    "title": "Midnight in the Room",
+    "file": "midnight-in-the-room.mp3",
+    "duration": 245.4,
+    "bpm": 96.3
+  },
+  {
+    "show": "slowdrive",
+    "title": "Alone in the Room at Midnight",
+    "file": "alone-in-the-room-at-midnight.mp3",
+    "duration": 254.9,
+    "bpm": 93.3
+  },
+  {
+    "show": "slowdrive",
+    "title": "Slow Velvet Drip",
+    "file": "slow-velvet-drip.mp3",
+    "duration": 225.8,
+    "bpm": 107.1
+  },
+  {
+    "show": "slowdrive",
+    "title": "Velvet at Last Light",
+    "file": "velvet-at-last-light.mp3",
+    "duration": 193.1,
+    "bpm": 96.8
+  },
+  {
+    "show": "slowdrive",
+    "title": "Velvet Hours Fading",
+    "file": "velvet-hours-fading.mp3",
+    "duration": 209.6,
+    "bpm": 97.4
+  },
+  {
+    "show": "slowdrive",
+    "title": "Velvet Replay",
+    "file": "velvet-replay.mp3",
+    "duration": 187.4,
+    "bpm": 107.2
+  },
+  {
+    "show": "slowdrive",
+    "title": "Replay in Velvet",
+    "file": "replay-in-velvet.mp3",
+    "duration": 285.2,
+    "bpm": 93.8
+  },
+  {
+    "show": "slowdrive",
+    "title": "Velvet Sidewalk",
+    "file": "velvet-sidewalk.mp3",
+    "duration": 176.0,
+    "bpm": 99.4
+  },
+  {
+    "show": "slowdrive",
+    "title": "Sidewalk in Velvet",
+    "file": "sidewalk-in-velvet.mp3",
+    "duration": 372.2,
+    "bpm": 93.9
+  },
+  {
+    "show": "slowdrive",
+    "title": "Velvet Turnaround",
+    "file": "velvet-turnaround.mp3",
+    "duration": 168.8,
+    "bpm": 93.5
+  },
+  {
+    "show": "slowdrive",
+    "title": "Turnaround in Velvet",
+    "file": "turnaround-in-velvet.mp3",
+    "duration": 193.2,
+    "bpm": 92.0
   }
 ]
